@@ -1,1 +1,431 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ctrlsec.io | Take Control of Security</title>
+<meta content="Advanced cybersecurity ecosystem specializing in training, vulnerability disclosure, and compliance." name="description"/>
+<!-- Tailwind CSS V3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: JetBrains Mono for technical text, Inter for UI -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'dark-bg': '#0D0D0D',
+            'matrix-green': '#00FF00',
+            'cyber-blue': '#00D4FF',
+            'glass-border': 'rgba(0, 255, 0, 0.2)',
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'blink': 'blink 1s step-end infinite',
+          },
+          keyframes: {
+            blink: {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0 },
+            }
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for Matrix Background and Glassmorphism -->
+<style data-purpose="custom-effects">body {
+    background-color: #0D0D0D;
+    color: #FFF;
+    overflow-x: hidden
+    }
+/* Digital Rain / Code Grid Texture Overlay */
+.matrix-bg {
+    background-image: linear-gradient(rgba(13, 13, 13, 0.9), rgba(13, 13, 13, 0.9)), url(https://lh3.googleusercontent.com/aida-public/AB6AXuAJMbwryWo3zV44OfC00SwwIPABiM5ZVoEH7GIOwFSfz_IkJFtnXztvi--w5EoMrJiFcR0FCbrVscr14CcwAbwICNdjTJQXM8TenYGbFFDUHgS9zjW4QO4BqbTrtpRjsi46_Y3etsVdFcciX63VMoxgYOGI9CkejDDKN-Z8TH9VzwE2WrmSze-F5-YimatCoOUZTaaEN-p28DPuMxfWfLdDUcEBiE3xVkfhdiHR4mSGxIcOsPoa_07hC_sxCdTBCI5GBi-mq-vBDQ);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.3
+    }
+/* Glassmorphism Card Style */
+.glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 255, 0, 0.15);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8)
+    }
+.glass-card:hover {
+    border-color: #0F0;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+    transition: all 0.3s ease
+    }
+/* Terminal Cursor */
+.cursor-blink::after {
+    content: "_";
+    animation: blink 1s step-end infinite;
+    color: #0F0
+    }
+/* Neon Glow Text */
+.glow-green {
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5)
+    }
+/* Glowing Progress Bar */
+.progress-glow {
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.6)
+    }</style>
+</head>
+<body class="font-sans antialiased">
+<!-- Matrix Background Overlay -->
+<div class="matrix-bg"></div>
+<!-- BEGIN: Navigation -->
+<nav class="fixed top-0 w-full z-50 border-b border-white/5 bg-dark-bg/80 backdrop-blur-md" data-purpose="main-nav">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-2">
+<div class="flex items-center font-mono text-2xl font-bold tracking-tighter">
+<span>ctrl</span>
+<span class="bg-matrix-green text-black px-1 ml-1 rounded">sec</span>
+</div>
+</div>
+<div class="hidden md:block">
+<div class="ml-10 flex items-baseline space-x-8 font-mono text-sm uppercase tracking-wider">
+<a class="hover:text-matrix-green transition-colors" href="#problem">Vulnerabilities</a>
+<a class="hover:text-matrix-green transition-colors" href="#ecosystem">Academy</a>
+<a class="hover:text-matrix-green transition-colors" href="#traction">Network</a>
+<a class="px-4 py-2 border border-matrix-green text-matrix-green hover:bg-matrix-green hover:text-black transition-all rounded-sm" href="#">Console Login</a>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- END: Navigation -->
+<!-- BEGIN: Hero Section -->
+<main class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden" data-purpose="hero-section">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center"><div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-matrix-green border border-matrix-green/30 rounded backdrop-blur-sm animate-pulse">
+  [INVESTOR_RELATIONS] • PRE-SEED ROUND OPEN: ₹5CR
+</div>
+<!-- Visual Status Indicator from Screenshot Style -->
+<div class="mb-12 inline-block">
+<div class="flex flex-col items-center">
+<div class="flex items-center font-mono text-6xl md:text-8xl font-bold mb-6">
+<span class="text-white">ctrl</span>
+<span class="bg-matrix-green text-black px-4 py-1 ml-2 rounded-md shadow-[0_0_30px_rgba(0,255,0,0.4)]">sec</span>
+</div>
+<p class="text-xl md:text-2xl font-mono text-white tracking-widest uppercase mb-8">
+            Take control of security<span class="cursor-blink"></span>
+</p>
+</div>
+<!-- Progress Bar Mockup -->
+<div class="w-full max-w-md mx-auto mt-4">
+<div class="flex justify-between items-end mb-2 font-mono text-[10px] uppercase tracking-widest">
+<span class="text-cyber-blue animate-pulse">Finalizing Audit Report...</span>
+<span class="text-matrix-green">44%</span>
+</div>
+<div class="w-full bg-white/10 h-2 rounded-full overflow-hidden">
+<div class="bg-gradient-to-r from-cyber-blue to-matrix-green h-full progress-glow" style="width: 44%"></div>
+</div>
+<p class="mt-2 font-mono text-[10px] italic text-gray-500">Almost ready...</p>
+</div>
+</div>
+<!-- Hero Actions -->
+<div class="flex flex-col sm:flex-row justify-center items-center gap-6 mt-12">
+<a class="group relative px-8 py-4 bg-matrix-green text-black font-bold font-mono uppercase tracking-widest transition-transform active:scale-95 hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]" href="#academy">
+          Explore Academy
+        </a>
+<a class="px-8 py-4 border border-white/20 hover:border-cyber-blue text-white font-bold font-mono uppercase tracking-widest transition-all hover:text-cyber-blue" href="#vdp">
+          Launch VDP
+        </a>
+</div>
+</div>
+<!-- Decorative Wireframe element (Background) -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] pointer-events-none opacity-20">
+<svg class="w-full h-full" viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<path d="M100,0 L100,200 M0,100 L200,100" fill="none" stroke="#00FF00" stroke-width="0.2"></path>
+<circle cx="100" cy="100" fill="none" r="40" stroke="#00D4FF" stroke-dasharray="2,2" stroke-width="0.5"></circle>
+<circle cx="100" cy="100" fill="none" r="80" stroke="#00FF00" stroke-width="0.2"></circle>
+<rect fill="none" height="80" stroke="#00D4FF" stroke-width="0.3" transform="rotate(45 100 100)" width="80" x="60" y="60"></rect>
+</svg>
+</div>
+</main>
+<!-- END: Hero Section -->
+<!-- BEGIN: The Problem Section -->
+<section class="py-24 relative" data-purpose="problem-section" id="problem">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="mb-16 text-center">
+<h2 class="font-mono text-matrix-green text-sm tracking-[0.3em] uppercase mb-4">Critical Vulnerability Report</h2>
+<h3 class="text-4xl font-bold tracking-tight text-white">Critical Gaps in Indian Cybersecurity</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8"><!-- Card 1: Talent -->
+<div class="glass-card p-8 rounded-lg border-l-4 border-matrix-green relative group">
+<div class="absolute top-4 right-4 text-[10px] font-mono text-matrix-green/40">[STATUS: CRITICAL]</div>
+<h4 class="text-2xl font-bold mb-4 font-mono">01. TALENT CRISIS</h4>
+<p class="text-gray-400 text-sm mb-6">3.5 Million+ unfilled cybersecurity roles globally. The cost of traditional training is too high, and the output is too slow for modern threats.</p>
+<div class="bg-matrix-green/10 p-4 border border-matrix-green/20 rounded">
+<div class="text-xs font-mono uppercase text-matrix-green mb-1">Market Gap</div>
+<div class="text-3xl font-bold font-mono">3.5M+</div>
+<div class="text-[10px] text-gray-500">Unfilled Vacancies in 2024</div>
+</div>
+</div>
+<!-- Card 2: Breach Cost -->
+<div class="glass-card p-8 rounded-lg border-l-4 border-cyber-blue relative group">
+<div class="absolute top-4 right-4 text-[10px] font-mono text-cyber-blue/40">[STATUS: WARNING]</div>
+<h4 class="text-2xl font-bold mb-4 font-mono">02. VULNERABILITY CHAOS</h4>
+<p class="text-gray-400 text-sm mb-6">SMBs and enterprises are bleeding capital due to uncoordinated bug hunting and lack of professional disclosure programs (VDP).</p>
+<div class="bg-cyber-blue/10 p-4 border border-cyber-blue/20 rounded">
+<div class="text-xs font-mono uppercase text-cyber-blue mb-1">Avg. Breach Cost</div>
+<div class="text-3xl font-bold font-mono">₹17.6 CR</div>
+<div class="text-[10px] text-gray-500">Per Incident in India</div>
+</div>
+</div>
+<!-- Card 3: Regulation -->
+<div class="glass-card p-8 rounded-lg border-l-4 border-white/40 relative group">
+<div class="absolute top-4 right-4 text-[10px] font-mono text-white/40">[STATUS: COMPLIANCE]</div>
+<h4 class="text-2xl font-bold mb-4 font-mono">03. DPDP ACT 2023</h4>
+<p class="text-gray-400 text-sm mb-6">New Indian data protection laws mandate strict security measures with devastating penalties for non-compliance.</p>
+<div class="bg-white/5 p-4 border border-white/10 rounded">
+<div class="text-xs font-mono uppercase text-white mb-1">Maximum Fine</div>
+<div class="text-3xl font-bold font-mono">₹250 CR</div>
+<div class="text-[10px] text-gray-500">Per Single Violation</div>
+</div>
+</div></div>
+</div>
+</section>
+<!-- END: The Problem Section -->
+<!-- BEGIN: The Ecosystem -->
+<section class="py-24 bg-white/5 border-y border-white/5" data-purpose="ecosystem-pillars" id="ecosystem">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<div>
+<h2 class="font-mono text-matrix-green text-sm tracking-widest uppercase mb-6">The ctrlsec Ecosystem</h2>
+<h3 class="text-5xl font-bold mb-8 leading-tight">Unified Security Operations.</h3>
+<div class="space-y-10">
+<!-- Learn -->
+<div class="flex gap-6">
+<div class="font-mono text-matrix-green text-xl pt-1">01</div>
+<div>
+<h4 class="text-2xl font-bold font-mono mb-2">ctrl + learn <span class="text-matrix-green">security</span></h4>
+<p class="text-gray-400">Our Academy provides hands-on CTF platforms and a dedicated placement pipeline for the next gen of cyber defenders.</p>
+</div>
+</div>
+<!-- Defend -->
+<div class="flex gap-6">
+<div class="font-mono text-cyber-blue text-xl pt-1">02</div>
+<div>
+<h4 class="text-2xl font-bold font-mono mb-2">ctrl + find <span class="text-cyber-blue">vulnerabilities</span></h4>
+<p class="text-gray-400">Our VDP connects companies with a vetted community of 500+ researchers to identify risks before attackers do.</p>
+</div>
+</div>
+<!-- Comply -->
+<div class="flex gap-6">
+<div class="font-mono text-white text-xl pt-1">03</div>
+<div>
+<h4 class="text-2xl font-bold font-mono mb-2">ctrl + secure <span class="text-white">everything</span></h4>
+<p class="text-gray-400">Technical consulting focused on DPDP Act compliance and deep-dive penetration testing for enterprises.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Terminal Visualization -->
+<div class="relative group" id="terminal-container">
+<div class="absolute -inset-1 bg-gradient-to-r from-matrix-green to-cyber-blue rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+<div class="relative glass-card rounded-lg overflow-hidden border border-white/10">
+<div class="bg-white/5 px-4 py-2 flex items-center gap-2 border-b border-white/10">
+<div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-yellow-500/50"></div>
+<div class="w-3 h-3 rounded-full bg-green-500/50"></div>
+<span class="ml-4 font-mono text-xs text-gray-500 tracking-widest">SHELL v4.2.0 - SEC_OPS</span>
+</div>
+<div class="p-6 font-mono text-sm space-y-2 h-[400px] overflow-y-auto" id="terminal-content">
+<p class="text-matrix-green">[INFO] Initializing secure handshake...</p>
+<p class="text-matrix-green">[INFO] Connected to ctrlsec_mesh_network_node_01</p>
+<p class="text-gray-500">Establishing tunnel...</p>
+<p class="text-white font-bold">&gt; Running vulnerability_scan --all</p>
+<p class="text-gray-400">Scanning assets...</p>
+<div class="flex gap-2">
+<span class="text-cyber-blue">[SCAN]</span>
+<span class="text-white">API_Endpoint_Production: </span>
+<span class="text-matrix-green">SECURE</span>
+</div>
+<div class="flex gap-2">
+<span class="text-cyber-blue">[SCAN]</span>
+<span class="text-white">Database_Auth_V2: </span>
+<span class="text-red-500">VULNERABLE (CVE-2023-XX)</span>
+</div>
+<p class="text-yellow-500 italic mt-4">! Alert: Patch required for production cluster.</p>
+<p class="text-white font-bold mt-4">&gt; Initiate academy_training --module=redteam</p>
+<p class="text-gray-400">Loading modules: 14/14 loaded.</p>
+<p class="text-matrix-green">Session active. Happy hacking.</p>
+<span class="inline-block w-2 h-4 bg-matrix-green animate-blink"></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section class="py-24 bg-dark-bg border-b border-white/5" id="market">
+<div class="max-w-7xl mx-auto px-4">
+<div class="grid lg:grid-cols-2 gap-16 items-center">
+<div class="order-2 lg:order-1">
+<div class="grid grid-cols-2 gap-4">
+<div class="glass-card p-6 border-matrix-green/20">
+<div class="text-4xl font-bold font-mono text-matrix-green mb-2">₹6,300Cr+</div>
+<p class="text-xs font-mono text-gray-400 uppercase tracking-widest">India Cybersecurity TAM</p>
+</div>
+<div class="glass-card p-6 border-cyber-blue/20">
+<div class="text-4xl font-bold font-mono text-cyber-blue mb-2">15.6%</div>
+<p class="text-xs font-mono text-gray-400 uppercase tracking-widest">Projected CAGR</p>
+</div>
+</div>
+</div>
+<div class="order-1 lg:order-2">
+<h2 class="font-mono text-matrix-green text-sm tracking-[0.4em] uppercase mb-4">The Opportunity</h2>
+<h3 class="text-4xl font-bold mb-6">A Massive Market Catalyzed by Regulation.</h3>
+<p class="text-gray-400 mb-8 leading-relaxed font-mono">
+          The DPDP Act 2023 creates a mandatory requirement for 1,000s of Indian firms to audit their security posture. ctrlsec is building the infrastructure to supply the talent and the testing at scale.
+        </p>
+<div class="border-l-2 border-matrix-green pl-6 py-2">
+<h5 class="text-white font-bold font-mono uppercase text-sm mb-2">The Moat</h5>
+<p class="text-xs text-gray-500">Our Academy feeds our VDP, creating a self-sustaining cycle of high-quality talent that enterprise clients can trust.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: The Ecosystem -->
+<!-- BEGIN: Traction Dashboard -->
+<section class="py-24 relative" data-purpose="traction-stats" id="traction">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="glass-card p-10 border-matrix-green/40 shadow-[0_0_50px_rgba(0,255,0,0.05)]">
+<div class="flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
+<div class="space-y-2">
+<h4 class="font-mono text-gray-500 text-xs uppercase tracking-[0.4em]">Live Network Stats</h4>
+<div class="text-4xl font-bold font-mono glow-green">SYSTEM TRACTION</div>
+</div>
+<div class="flex flex-wrap justify-center md:justify-end gap-12">
+<div class="flex flex-col">
+<span class="font-mono text-3xl font-bold text-white">500+</span>
+<span class="font-mono text-xs text-matrix-green uppercase">Researchers</span>
+</div>
+<div class="flex flex-col">
+<span class="font-mono text-3xl font-bold text-white">5+</span>
+<span class="font-mono text-xs text-cyber-blue uppercase">LOIs Signed</span>
+</div>
+<div class="flex flex-col">
+<span class="font-mono text-3xl font-bold text-white">100+</span>
+<span class="font-mono text-xs text-gray-400 uppercase">Challenges</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Traction Dashboard -->
+<!-- BEGIN: Footer -->
+<section class="py-24 bg-white/5" id="roadmap">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="font-mono text-matrix-green text-sm tracking-[0.4em] uppercase mb-4">Development Timeline</h2>
+<h3 class="text-4xl font-bold">The 18-Month Vision</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="glass-card p-6 border-matrix-green shadow-[0_0_15px_rgba(0,255,0,0.1)]">
+<div class="text-matrix-green font-mono text-xs mb-4 uppercase tracking-tighter">[Phase 01: Q4 2024]</div>
+<h5 class="font-bold font-mono mb-2">Genesis Phase</h5>
+<p class="text-[11px] text-gray-400">v1.0 Platform Launch, 500+ Researchers onboarded, University LOIs secured.</p>
+</div>
+<div class="glass-card p-6 border-white/10">
+<div class="text-gray-500 font-mono text-xs mb-4 uppercase tracking-tighter">[Phase 02: Q2 2025]</div>
+<h5 class="font-bold font-mono mb-2">Scale Academy</h5>
+<p class="text-[11px] text-gray-400">Tier 1 city rollout, CTF-as-a-Service, 10k student target.</p>
+</div>
+<div class="glass-card p-6 border-white/10">
+<div class="text-gray-500 font-mono text-xs mb-4 uppercase tracking-tighter">[Phase 03: Q4 2025]</div>
+<h5 class="font-bold font-mono mb-2">VDP Enterprise</h5>
+<p class="text-[11px] text-gray-400">Automated triage, Managed disclosure for mid-market firms.</p>
+</div>
+<div class="glass-card p-6 border-white/10">
+<div class="text-gray-500 font-mono text-xs mb-4 uppercase tracking-tighter">[Phase 04: 2026+]</div>
+<h5 class="font-bold font-mono mb-2">Security Mesh</h5>
+<p class="text-[11px] text-gray-400">AI-driven continuous monitoring and automated remediation tools.</p>
+</div>
+</div>
+</div>
+</section><footer class="py-12 border-t border-white/5" data-purpose="site-footer">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+<div class="col-span-2">
+<div class="flex items-center font-mono text-2xl font-bold mb-6">
+<span>ctrl</span>
+<span class="bg-matrix-green text-black px-1 ml-1 rounded">sec</span>
+</div>
+<p class="text-gray-500 font-mono text-sm max-w-sm mb-6 italic">"Building the defensive shield for Digital India. Vision 2030: Protecting every byte, empowering every professional."</p>
+<div class="text-xs font-mono text-matrix-green">
+      [CONTACT]: ops@ctrlsec.io
+    </div>
+</div>
+<div>
+<h5 class="text-white font-mono text-xs uppercase mb-6">Network</h5>
+<ul class="space-y-4 font-mono text-xs text-gray-500">
+<li><a class="hover:text-matrix-green" href="#">[Discord]</a></li>
+<li><a class="hover:text-cyber-blue" href="#">[Twitter/X]</a></li>
+<li><a class="hover:text-white" href="#">[GitHub]</a></li>
+</ul>
+</div>
+<div>
+<h5 class="text-white font-mono text-xs uppercase mb-6">Resources</h5>
+<ul class="space-y-4 font-mono text-xs text-gray-500">
+<li><a class="hover:text-matrix-green" href="#">[Academy FAQ]</a></li>
+<li><a class="hover:text-cyber-blue" href="#">[VDP Policies]</a></li>
+<li><a class="hover:text-white" href="#">[Privacy / DPDP]</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-[10px] text-gray-600 font-mono">DESIGN_HASH: 771B42 • © 2024 CTRLSEC.IO</span>
+<div class="flex gap-4 items-center">
+<div class="px-3 py-1 border border-matrix-green/20 rounded-full flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-matrix-green rounded-full animate-pulse"></span>
+<span class="font-mono text-[9px] uppercase text-matrix-green">All Systems Operational</span>
+</div>
+</div>
+</div></div>
+</footer>
+<!-- END: Footer -->
+<!-- Simple JavaScript for Terminal Auto-Scroll Simulation -->
+<script data-purpose="terminal-auto-scroll">
+    const terminal = document.getElementById('terminal-content');
+    if (terminal) {
+      // Simulate new lines appearing occasionally
+      setInterval(() => {
+        const logs = [
+          '[INFO] Heartbeat detected from node_78',
+          '[SCAN] Scanning peripheral subnet 192.168.1.X',
+          '[SEC] Encryption layers validated (AES-256-GCM)',
+          '[ACADEMY] User "ghost_r00t" completed Advanced XSS module'
+        ];
+        const randomLog = logs[Math.floor(Math.random() * logs.length)];
+        const p = document.createElement('p');
+        p.className = 'text-[10px] text-gray-600 italic';
+        p.innerText = `> ${new Date().toLocaleTimeString()} ${randomLog}`;
+        
+        // Keep terminal clean, remove first child if too many
+        if (terminal.children.length > 20) {
+          terminal.removeChild(terminal.children[5]);
+        }
+        
+        // Insert before the cursor
+        terminal.insertBefore(p, terminal.lastElementChild);
+        terminal.scrollTop = terminal.scrollHeight;
+      }, 4000);
+    }
+  </script>
+</body></html>
