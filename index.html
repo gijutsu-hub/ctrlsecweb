@@ -3,349 +3,528 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CTRLSEC // SYSTEM</title>
-<!-- Tailwind CSS -->
+<title>ctrlsec.io | Building Structured Cybersecurity Ecosystems</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-        tailwind.config = {
+<script id="tailwind-config">tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#00C36A", // Signal Green
-                        "background-light": "#f6f8f7",
-                        "background-dark": "#0B0B0B", // Void Black
-                        "surface": "#161616",
-                        "border-color": "#333333",
-                        "text-main": "#E6E6E6",
-                        "text-dim": "#888888",
+                        "primary": "#00ff26",
+                        "warning": "#ff3e3e",
+                        "alert": "#ff9100",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#050505",
+                        "terminal-gray": "#0a0f0b",
+                        "border-muted": "#152017"
                     },
                     fontFamily: {
-                        "display": ["JetBrains Mono", "monospace"],
-                        "body": ["Space Grotesk", "sans-serif"], // Using Space Grotesk as the sans alternative requested
-                        "mono": ["JetBrains Mono", "monospace"],
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
                     },
-                    backgroundImage: {
-                        'dither-noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E\")",
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "2px",
+                        "xl": "4px",
+                        "full": "9999px"
                     },
-                    animation: {
-                        'spin-slow': 'spin 20s linear infinite',
-                        'marquee': 'marquee 25s linear infinite',
-                    },
-                    keyframes: {
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-100%)' },
-                        }
-                    }
                 },
             },
-        }
-    </script>
+        }</script>
 <style>
-        /* Custom Dither Pattern Class */
-        .bg-dither {
-            background-image: radial-gradient(#333 1px, transparent 1px);
-            background-size: 4px 4px;
+        body {
+            background-image: 
+                linear-gradient(to right, #111 1px, transparent 1px),
+                linear-gradient(to bottom, #111 1px, transparent 1px);
+            background-size: 40px 40px;
         }
-        
-        /* Grid Line Utilities */
-        .grid-bordered > * {
-            position: relative;
-        }
-        .grid-bordered > *::after {
-            content: '';
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 38, 0.1);
             position: absolute;
             top: 0;
-            right: 0;
-            bottom: 0;
             left: 0;
-            border: 1px solid #333333;
-            pointer-events: none;
-        }
-
-        /* Hover Effect for Grid Cells */
-        .hover-cell {
-            transition: all 0.2s ease;
-            position: relative;
-        }
-        .hover-cell:hover {
-            z-index: 10;
-        }
-        .hover-cell:hover::after {
-            border-color: #00C36A;
-            box-shadow: inset 0 0 20px rgba(0, 195, 106, 0.1);
-        }
-
-        /* Scanline Effect */
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
-            background-size: 100% 4px;
-            pointer-events: none;
             z-index: 50;
-            opacity: 0.15;
+            pointer-events: none;
         }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .glow-green {
+            box-shadow: 0 0 15px rgba(0, 255, 38, 0.3);
         }
-        ::-webkit-scrollbar-track {
-            background: #0B0B0B; 
+        .text-glow {
+            text-shadow: 0 0 8px rgba(0, 255, 38, 0.5);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #333; 
+    
+        @keyframes glitch {
+            0% { opacity: 1; transform: translateX(0); }
+            10% { opacity: 0.8; transform: translateX(-2px); }
+            20% { opacity: 1; transform: translateX(2px); }
+            30% { opacity: 0.9; transform: translateX(0); }
+            100% { opacity: 1; transform: translateX(0); }
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00C36A; 
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        .corner-bracket {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-color: rgba(0, 255, 38, 0.4);
+        }
+        .scan-bar-move {
+            animation: scanMove 4s linear infinite;
+        }
+        @keyframes scanMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
         }
     </style>
 </head>
-<body class="bg-background-dark text-text-main font-body antialiased overflow-x-hidden selection:bg-primary selection:text-black">
-<!-- Scanline Overlay -->
-<div class="scanline"></div>
-<!-- Top Navigation -->
-<nav class="sticky top-0 z-40 w-full border-b border-border-color bg-background-dark/95 backdrop-blur-sm">
-<div class="flex h-16 items-center justify-between px-6 lg:px-12">
-<!-- Brand -->
-<div class="flex items-center gap-3 group cursor-pointer">
-<span class="material-symbols-outlined text-primary text-2xl group-hover:animate-pulse">terminal</span>
-<span class="font-display font-bold text-lg tracking-tight">CTRLSEC <span class="text-text-dim text-sm font-normal">// SYSTEM</span></span>
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary selection:text-black min-h-screen flex flex-col overflow-x-hidden"><div class="scanline"></div>
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 border-b border-border-muted bg-background-dark/80 backdrop-blur-md px-6 lg:px-20 py-4">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary p-1.5 rounded-sm">
+<svg class="w-5 h-5 text-black" fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"></path>
+</svg>
 </div>
-<!-- Desktop Nav -->
-<div class="hidden md:flex items-center gap-1">
-<a class="px-6 py-2 text-sm font-mono text-text-dim hover:text-primary hover:bg-surface transition-colors border border-transparent hover:border-border-color" href="#">ACADEMY</a>
-<a class="px-6 py-2 text-sm font-mono text-text-dim hover:text-primary hover:bg-surface transition-colors border border-transparent hover:border-border-color" href="#">MANAGED VDP</a>
-<a class="px-6 py-2 text-sm font-mono text-text-dim hover:text-primary hover:bg-surface transition-colors border border-transparent hover:border-border-color" href="#">ABOUT</a>
+<h1 class="text-xl font-black tracking-tighter uppercase font-mono tracking-tightest">CTRLSEC.IO</h1>
 </div>
-<!-- CTA -->
-<div class="flex items-center">
-<button class="hidden md:flex items-center gap-2 px-5 py-2 bg-primary/10 border border-primary text-primary hover:bg-primary hover:text-black transition-all font-mono text-sm font-bold uppercase tracking-wide">
-<span class="w-2 h-2 bg-current animate-pulse"></span>
-                    Transmit Signal
-                </button>
-<!-- Mobile Menu Icon -->
-<button class="md:hidden text-white">
-<span class="material-symbols-outlined">menu</span>
+<nav class="hidden md:flex items-center gap-10 font-mono text-xs font-bold tracking-widest uppercase text-white/70">
+<a class="hover:text-primary transition-colors border-b border-transparent hover:border-primary pb-1" href="#">Academy</a>
+<a class="hover:text-primary transition-colors border-b border-transparent hover:border-primary pb-1" href="#">Managed VDP</a>
+<a class="hover:text-primary transition-colors border-b border-transparent hover:border-primary pb-1" href="#">About</a>
+</nav><div class="hidden lg:flex items-center gap-2 px-3 py-1 bg-warning/20 border border-warning/40 rounded-sm font-mono text-[10px] text-warning animate-pulse"><span class="w-1.5 h-1.5 bg-warning rounded-full"></span>ACTIVE BREACH DETECTED</div>
+<button class="bg-primary text-black font-bold px-5 py-2 text-xs uppercase tracking-tighter rounded-sm hover:brightness-110 transition-all glow-green flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">wifi_tethering</span>
+                Transmit Signal
+            </button>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative px-6 lg:px-20 pt-20 pb-32 max-w-[1440px] mx-auto">
+<div class="absolute top-10 right-20 font-mono text-[10px] text-primary/40 text-right leading-tight hidden xl:block">
+                [SYS_LINK: ESTABLISHED]<br/>
+                [ENCRYPTION: AES-256]<br/>
+                [PROTOCOL: VDP-7.2]
+            </div>
+<div class="flex flex-col gap-8 max-w-4xl">
+<div class="flex items-center gap-4 font-mono text-xs tracking-[0.3em] font-bold text-warning"><span class="inline-block w-8 h-[1px] bg-warning"></span> EMERGENCY PROTOCOL ENGAGED</div>
+<h1 class="text-5xl lg:text-8xl font-black tracking-tighter leading-[0.9] uppercase tracking-tightest">INCIDENT <span class="text-warning">RESPONSE</span> &amp; BREACH SUPPRESSION</h1>
+<p class="text-white/60 text-lg md:text-xl font-normal leading-relaxed max-w-2xl border-l-2 border-primary/30 pl-6 tracking-tight">Real-time threat detection and rapid containment. Engineered for emergency remediation. High-intensity suppression of unauthorized infrastructure access.</p>
+<div class="flex flex-wrap gap-4 mt-4">
+<button class="bg-primary text-black font-black px-8 py-4 rounded-sm hover:translate-x-1 hover:-translate-y-1 transition-transform glow-green flex items-center gap-3">
+                        INITIATE SEQUENCE
+                        <span class="material-symbols-outlined font-bold">arrow_forward</span>
 </button>
-</div>
-</div>
-</nav>
-<!-- Main Grid Layout -->
-<main class="w-full min-h-screen flex flex-col">
-<!-- SECTION 1: HERO (Command Center) -->
-<section class="relative w-full border-b border-border-color grid grid-cols-1 lg:grid-cols-12 min-h-[600px] overflow-hidden group">
-<!-- Content Side (8 Cols) -->
-<div class="col-span-1 lg:col-span-8 relative p-6 lg:p-12 flex flex-col justify-between border-r border-border-color bg-dither-noise">
-<!-- System Status -->
-<div class="flex items-center gap-2 mb-12">
-<div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-<span class="font-mono text-xs text-primary uppercase tracking-widest">Systemic Dither v1.0 // Online</span>
-</div>
-<!-- Main Headline -->
-<div class="relative z-10 max-w-4xl">
-<h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-medium leading-[0.9] tracking-tight uppercase text-white mb-6">
-                        Building Structured <br/>
-<span class="text-primary">Cybersecurity</span> <br/>
-                        Ecosystems
-                    </h1>
-<p class="font-mono text-text-dim max-w-lg text-sm md:text-base leading-relaxed border-l-2 border-primary pl-4">
-                        Replacing chaotic marketing fluff with modular precision. We bring order to security fragmentation through rigorous infrastructure.
-                    </p>
-</div>
-<!-- Action Bar -->
-<div class="mt-12 flex flex-wrap gap-4">
-<button class="px-8 py-3 bg-primary text-black font-display font-bold uppercase tracking-wider hover:bg-white transition-colors">
-                        Initiate Sequence
-                    </button>
-<button class="px-8 py-3 border border-border-color text-text-main font-display font-medium uppercase tracking-wider hover:border-primary hover:text-primary transition-colors flex items-center gap-2">
+<button class="border border-white/20 bg-white/5 backdrop-blur-sm text-white font-bold px-8 py-4 rounded-sm hover:bg-white/10 transition-colors uppercase tracking-widest text-sm">
                         Read Manifesto
-                        <span class="material-symbols-outlined text-sm">arrow_outward</span>
-</button>
+                    </button>
 </div>
-<!-- Background Grid Texture -->
-<div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none"></div>
-</div>
-<!-- Visual Side (4 Cols) - ASCII Globe Placeholder -->
-<div class="col-span-1 lg:col-span-4 relative bg-surface overflow-hidden flex items-center justify-center border-b lg:border-b-0 border-border-color min-h-[300px] lg:min-h-auto">
-<div class="absolute inset-0 bg-dither opacity-20"></div>
-<!-- Rotating Globe Container -->
-<div class="relative w-64 h-64 md:w-80 md:h-80 opacity-80 mix-blend-screen animate-spin-slow">
-<!-- Abstract Globe Representation using CSS gradients for visual approximation of the ascii globe concept -->
-<div class="w-full h-full rounded-full border border-primary/30 relative flex items-center justify-center overflow-hidden">
-<div class="absolute w-[110%] h-[110%] border border-primary/20 rounded-full rotate-45"></div>
-<div class="absolute w-[80%] h-[80%] border border-primary/20 rounded-full -rotate-12"></div>
-<div class="absolute w-full h-[1px] bg-primary/40 top-1/2"></div>
-<div class="absolute h-full w-[1px] bg-primary/40 left-1/2"></div>
-<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
-<!-- Pseudo ASCII Text Texture -->
-<div class="absolute inset-0 flex flex-wrap content-center justify-center p-4 text-[8px] leading-[8px] font-mono text-primary/40 overflow-hidden whitespace-pre text-center select-none">
-                            0101010101010101010101010101010101010101
-                            1010101010101010101010101010101010101010
-                            0011001100110011001100110011001100110011
-                            1100110011001100110011001100110011001100
-                            0101010101010101010101010101010101010101
-                            1010101010101010101010101010101010101010
-                            0011001100110011001100110011001100110011
-                            1100110011001100110011001100110011001100
-                            0101010101010101010101010101010101010101
-                            1010101010101010101010101010101010101010
-                            0011001100110011001100110011001100110011
-                            1100110011001100110011001100110011001100
-                        </div>
+<div class="mt-12 flex flex-wrap gap-8 items-center font-mono text-[11px] text-white/40 tracking-widest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">location_on</span>
+                        COORD: 34.0522 N, 118.2437 W
+                    </div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm animate-pulse">sensors</span>
+                        STATUS: MONITORING
+                    </div>
 </div>
 </div>
-<!-- Data Overlay -->
-<div class="absolute bottom-4 left-4 font-mono text-[10px] text-primary/60">
-                    COORD: 34.0522Â° N, 118.2437Â° W<br/>
-                    STATUS: MONITORING<br/>
-                    NODES: 4,021 ACTIVE
+<!-- Hero Image Decorator -->
+<div class="absolute -z-10 top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none overflow-hidden">
+<div class="w-full h-full bg-gradient-to-l from-primary/20 to-transparent"></div>
+<div class="absolute inset-0 border-[40px] border-background-dark/80 m-20"></div>
+<!-- Mockup Map UI -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/5 border border-primary/20 rounded-lg p-4 overflow-hidden">
+<div class="flex justify-between border-b border-primary/20 pb-2 mb-4 font-mono text-[10px]">
+<span class="">SCAN_SECTOR_07</span>
+<span class="">v1.0.4-BETA</span>
+</div>
+<div class="w-full h-full bg-background-dark/40 rounded flex items-center justify-center">
+<div class="w-64 h-64 border border-primary/10 rounded-full flex items-center justify-center">
+<div class="w-48 h-48 border border-primary/20 rounded-full flex items-center justify-center animate-spin" style="animation-duration: 10s;">
+<div class="w-2 h-2 bg-primary absolute top-0 left-1/2 -translate-x-1/2 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Grid -->
+<section class="border-y border-border-muted bg-primary/5">
+<div class="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border-muted font-mono">
+<div class="p-8 flex flex-col gap-2">
+<span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Network Status</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-warning">COMPROMISED</span>
+<span class="text-[10px] text-primary/60 pb-1">+99.9% UPTIME</span>
+</div>
+</div>
+<div class="p-8 flex flex-col gap-2">
+<span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Active Nodes</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-white">1,402</span>
+<span class="text-[10px] text-primary/60 pb-1">CONNECTED</span>
+</div>
+</div>
+<div class="p-8 flex flex-col gap-2">
+<span class="text-[10px] text-white/40 uppercase font-bold tracking-widest">Threat Level</span>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-white text-warning">CRITICAL</span>
+<span class="text-[10px] text-primary/60 pb-1">ALPHA-LEVEL SEC</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Core Services Section -->
+<section class="px-6 lg:px-20 py-24 max-w-[1440px] mx-auto">
+<div class="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
+<div class="max-w-2xl">
+<h2 class="text-4xl lg:text-5xl font-black tracking-tighter uppercase mb-6 tracking-tightest">Active Containment <br/><span class="text-warning">Strategies</span></h2>
+<p class="text-white/60 text-lg tracking-tight">Structured disclosure and threat infrastructure management designed for the requirements of the modern enterprise. We build what stays standing.</p>
+</div>
+<div class="font-mono text-[11px] text-primary bg-primary/10 border border-primary/20 px-4 py-2 rounded-sm inline-flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
+                    SYSTEM_SERVICES_READY
                 </div>
 </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1"><!-- Managed VDP -->
+<div class="group relative bg-terminal-gray border border-border-muted p-8 hover:bg-primary/[0.03] transition-all cursor-default">
+<div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-primary/40">01</div>
+<div class="mb-8 w-12 h-12 flex items-center justify-center bg-background-dark border border-primary/20 text-primary rounded-sm group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined">shield_lock</span>
+</div>
+<h3 class="text-2xl font-black tracking-tighter mb-3 uppercase group-hover:text-primary transition-colors tracking-tightest">Breach Remediation</h3>
+<p class="text-white/50 text-sm mb-8 leading-relaxed tracking-tight">Rapid isolation and neutralisation of compromised nodes. Sovereign cleanup of unauthorized persistent threats.</p>
+<div class="space-y-4 mb-8">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-[9px] font-mono text-white/30 uppercase">Infrastructure Load</div>
+<div class="flex gap-0.5">
+<div class="h-1.5 flex-1 bg-primary/40"></div>
+<div class="h-1.5 flex-1 bg-primary/40"></div>
+<div class="h-1.5 flex-1 bg-primary/40"></div>
+<div class="h-1.5 flex-1 bg-primary/20"></div>
+<div class="h-1.5 flex-1 bg-primary/10"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between font-mono text-[10px] pt-6 border-t border-white/5 uppercase font-bold tracking-tighter">
+<span class="text-white/40">System Priority</span>
+<span class="text-primary">CRITICAL</span>
+</div>
+</div>
+<!-- CTF Operations -->
+<div class="group relative bg-terminal-gray border border-border-muted p-8 hover:bg-primary/[0.03] transition-all cursor-default">
+<div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-primary/40">02</div>
+<div class="mb-8 w-12 h-12 flex items-center justify-center bg-background-dark border border-primary/20 text-primary rounded-sm group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined">terminal</span>
+</div>
+<h3 class="text-2xl font-black tracking-tighter mb-3 uppercase group-hover:text-primary transition-colors tracking-tightest">Threat Hunting</h3>
+<p class="text-white/50 text-sm mb-8 leading-relaxed tracking-tight">Advanced Skill Validation &amp; Training. Gamified security scenarios engineered to test tactical limits.</p>
+<div class="space-y-4 mb-8">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-[9px] font-mono text-white/30 uppercase">Validation Engine</div>
+<div class="flex gap-0.5">
+<div class="h-1.5 flex-1 bg-primary/80 animate-pulse"></div>
+<div class="h-1.5 flex-1 bg-primary/80 animate-pulse"></div>
+<div class="h-1.5 flex-1 bg-primary/80 animate-pulse"></div>
+<div class="h-1.5 flex-1 bg-primary/80 animate-pulse"></div>
+<div class="h-1.5 flex-1 bg-primary/40"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between font-mono text-[10px] pt-6 border-t border-white/5 uppercase font-bold tracking-tighter">
+<span class="text-white/40">Operation Status</span>
+<span class="text-primary">STABLE</span>
+</div>
+</div>
+<!-- Strategic Architecture -->
+<div class="group relative bg-terminal-gray border border-border-muted p-8 hover:bg-primary/[0.03] transition-all cursor-default">
+<div class="absolute top-0 right-0 p-4 font-mono text-[10px] text-primary/40">03</div>
+<div class="mb-8 w-12 h-12 flex items-center justify-center bg-background-dark border border-primary/20 text-primary rounded-sm group-hover:border-primary/50 transition-all">
+<span class="material-symbols-outlined">memory</span>
+</div>
+<h3 class="text-2xl font-black tracking-tighter mb-3 uppercase group-hover:text-primary transition-colors tracking-tightest">Forensic Analysis</h3>
+<p class="text-white/50 text-sm mb-8 leading-relaxed tracking-tight">Networking, Infrastructure, &amp; Strategic Architecture. Custom-built secure pathways for critical data flows.</p>
+<div class="space-y-4 mb-8">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-[9px] font-mono text-white/30 uppercase">Deployment Speed</div>
+<div class="flex gap-0.5">
+<div class="h-1.5 flex-1 bg-primary/60"></div>
+<div class="h-1.5 flex-1 bg-primary/60"></div>
+<div class="h-1.5 flex-1 bg-primary/60"></div>
+<div class="h-1.5 flex-1 bg-primary/60"></div>
+<div class="h-1.5 flex-1 bg-primary/60"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between font-mono text-[10px] pt-6 border-t border-white/5 uppercase font-bold tracking-tighter">
+<span class="text-white/40">Layer Status</span>
+<span class="text-primary">ENCRYPTED</span>
+</div>
+</div></div>
 </section>
-<!-- SECTION 2: PROBLEM STATEMENT (The Noise) -->
-<section class="grid grid-cols-1 md:grid-cols-12 border-b border-border-color">
-<!-- Title Column -->
-<div class="md:col-span-3 border-b md:border-b-0 border-border-color p-8 md:p-12 bg-background-dark hover-cell">
-<div class="h-full flex flex-col justify-between">
-<span class="font-mono text-primary text-xs border border-primary/30 px-2 py-1 inline-block w-fit">ERR_01: NOISE</span>
-<h2 class="font-display text-3xl font-bold uppercase mt-8 text-white">Fragmen<br/>tation</h2>
+<!-- CTA Section with Grid UI -->
+<section class="px-6 lg:px-20 py-24 border-t border-border-muted bg-primary/[0.01]">
+<div class="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-20 items-center">
+<div class="relative">
+<div class="absolute -inset-4 border border-primary/10 rounded-sm pointer-events-none"></div>
+<div class="bg-background-dark border border-primary/20 aspect-video relative flex items-center justify-center p-8">
+<!-- High-tech SVG visualization -->
+<svg class="w-full h-full" viewbox="0 0 400 200">
+<defs>
+<filter id="glow">
+<fegaussianblur result="coloredBlur" stddeviation="2"></fegaussianblur>
+<femerge>
+<femergenode in="coloredBlur"></femergenode>
+<femergenode in="SourceGraphic"></femergenode>
+</femerge>
+</filter>
+</defs>
+<path class="opacity-80 animate-pulse" d="M20 180 L80 40 L160 150 L240 20 L320 140 L380 60" fill="none" filter="url(#glow)" stroke="#ff3e3e" stroke-width="2"></path>
+<g class="opacity-20">
+<circle cx="50" cy="150" fill="#00ff26" r="2"></circle>
+<circle cx="100" cy="80" fill="#00ff26" r="2"></circle>
+<circle cx="150" cy="120" fill="#00ff26" r="2"></circle>
+<circle cx="200" cy="40" fill="#00ff26" r="2"></circle>
+</g>
+<rect class="opacity-5" fill="#00ff26" height="20" width="400" x="0" y="180"></rect>
+<text class="opacity-40" fill="#00ff26" font-family="monospace" font-size="8" x="10" y="194">LIVE_FEED: GLOBAL_NODE_REPLICATION_SUCCESS</text>
+</svg>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
 </div>
-</div>
-<!-- Text Column -->
-<div class="md:col-span-5 border-b md:border-b-0 border-l border-border-color p-8 md:p-12 bg-surface hover-cell group">
-<div class="flex flex-col gap-6">
-<p class="font-body text-xl text-text-main leading-relaxed">
-                        The industry is loud. Tools are disconnected. Talent is unverified.
-                    </p>
-<p class="font-mono text-sm text-text-dim">
-                        // We are drowning in alerts but starving for context. Security has become a patchwork of black boxes that don't talk to each other.
-                    </p>
-<div class="mt-auto pt-8">
-<div class="h-[1px] w-full bg-border-color group-hover:bg-primary transition-colors"></div>
-<div class="flex justify-between mt-2 font-mono text-[10px] uppercase text-text-dim">
-<span>Sector Analysis</span>
-<span class="text-red-500">Critical Failure</span>
-</div>
-</div>
-</div>
-</div>
-<!-- Image Column (Dithered) -->
-<div class="md:col-span-4 border-l border-border-color relative min-h-[300px] overflow-hidden group hover-cell">
-<!-- Image with Dither Filter Overlay -->
-<div class="absolute inset-0 bg-cover bg-center grayscale contrast-125 brightness-75 group-hover:scale-105 transition-transform duration-700" data-alt="Close up of chaotic server cables representing fragmentation" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCZZLpyKuecpAckdAyIWex7SQeJb5A3WPPWA_wY2V4h2I7Ez4bc5w_DlYTLh4a6mhMZc7Gaijuxuvbpma3dgxyy8a0bIUd_92J2kWa2s91RX1LOEk6tFThod576j6bKKwW1vV2rvhgEfCo7gKt0UmJJIa2k5COpisfC9gtX2ZjivJ3AKaaG0C5WAIYm2svtu3Up96LvmT8bLD4zYwC6vWSgZgl4ZuQouqSJ84lyp0F3YBXITAv_RFjvZWr9LzwELYxP5CyM80jozsA');">
-</div>
-<!-- CSS Dither Effect Overlay -->
-<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuNSIvPgo8Y2lyY2xlIGN4PSIyIiBjeT0iMiIgcj0iMSIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjEiLz4KPC9zdmc+')] mix-blend-overlay opacity-50"></div>
-<div class="absolute inset-0 bg-primary/10 mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity"></div>
-</div>
-</section>
-<!-- SECTION 3: SOLUTION GRID (The Signal) -->
-<section class="border-b border-border-color">
-<div class="w-full bg-surface border-b border-border-color px-6 py-2 flex justify-between items-center">
-<span class="font-mono text-xs text-text-dim uppercase">// OUR ARCHITECTURE</span>
-<span class="font-mono text-xs text-primary uppercase animate-pulse">â— SIGNAL RESTORED</span>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3">
-<!-- Card 1: Academy -->
-<a class="group relative border-b md:border-b-0 md:border-r border-border-color bg-background-dark p-8 md:p-12 hover-cell block h-full" href="#">
-<div class="flex flex-col h-full justify-between gap-12">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-4xl text-text-dim group-hover:text-primary transition-colors">terminal</span>
-<span class="font-mono text-xs border border-border-color px-2 py-1 text-text-dim">MOD_01</span>
 </div>
 <div>
-<h3 class="font-display text-2xl font-bold text-white mb-2 group-hover:text-primary transition-colors">Academy</h3>
-<p class="font-mono text-sm text-text-dim uppercase tracking-wide">Standardizing Talent</p>
-<p class="font-body text-text-dim mt-4 text-sm leading-relaxed">
-                                Process visualization for education. Moving from theoretical knowledge to live-fire infrastructure validation.
-                            </p>
+<div class="font-mono text-primary text-[10px] tracking-[0.4em] mb-4">NETWORK TOPOLOGY</div>
+<h2 class="text-4xl font-black tracking-tighter uppercase mb-6 tracking-tightest">Active Threat <br/>Vector Map</h2>
+<p class="text-white/60 mb-8 tracking-tight">Our distributed infrastructure ensures low-latency response and high-availability for all security operations. Monitoring over 14,000 active nodes across 4 continents.</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-terminal-gray border border-border-muted p-4">
+<div class="text-[9px] text-white/30 font-mono uppercase mb-1">EU_CLUSTER</div>
+<div class="text-lg font-black text-white italic text-warning">UNSTABLE</div>
 </div>
-<div class="flex items-center gap-2 text-primary text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-<span>ACCESS TERMINAL</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<div class="bg-terminal-gray border border-border-muted p-4">
+<div class="text-[9px] text-white/30 font-mono uppercase mb-1">US_CLUSTER</div>
+<div class="text-lg font-black text-white italic">OPTIMAL</div>
 </div>
 </div>
-</a>
-<!-- Card 2: VDP -->
-<a class="group relative border-b md:border-b-0 md:border-r border-border-color bg-background-dark p-8 md:p-12 hover-cell block h-full" href="#">
-<div class="flex flex-col h-full justify-between gap-12">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-4xl text-text-dim group-hover:text-primary transition-colors">security</span>
-<span class="font-mono text-xs border border-border-color px-2 py-1 text-text-dim">MOD_02</span>
 </div>
+</div>
+</section><section class="px-6 lg:px-20 py-24 border-t border-border-muted bg-black/40">
+<div class="max-w-4xl mx-auto">
+<div class="font-mono text-primary text-[10px] tracking-[0.4em] mb-8 text-center uppercase">Interactive Environment</div>
+<div class="bg-[#050505] border border-primary/30 rounded-lg overflow-hidden shadow-2xl shadow-primary/5">
+<!-- Terminal Header -->
+<div class="bg-border-muted/50 border-b border-primary/20 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+</div>
+<span class="font-mono text-[10px] text-white/40 ml-4">CTRLSEC_TERMINAL_V4.0.1</span>
+</div>
+<div class="font-mono text-[10px] text-primary/40">SSH: 127.0.0.1</div>
+</div>
+<!-- Terminal Body -->
+<div class="p-6 font-mono text-sm leading-relaxed min-h-[400px] flex flex-col gap-1">
+<div class="flex gap-3">
+<span class="text-primary">guest@ctrlsec:~$</span>
+<span class="text-white">init_recon --target=global_perimeter</span>
+</div>
+<div class="text-primary/60">[INFO] Initializing scan sequence...</div>
+<div class="text-primary/60">[INFO] Mapping network topology: [####################] 100%</div>
+<div class="text-primary/60">[SCAN] Scanning perimeter nodes...</div>
+<div class="text-primary/60 animate-pulse">[WARN] Vulnerability found at memory address 0x7FF_X82...</div>
+<div class="text-primary/60">[INFO] Fingerprinting service: VDP-7.2_CORE</div>
+<div class="flex gap-3 mt-4">
+<span class="text-primary">guest@ctrlsec:~$</span>
+<span class="text-white">simulate_exploit --vuln=0x7FF_X82</span>
+</div>
+<div class="text-primary/60">[INFO] Initiating exploit simulation...</div>
+<div class="text-primary/60">[INFO] Bypassing secondary security layer...</div>
+<div class="text-primary/60">[SUCCESS] Privilege escalation confirmed.</div>
+<div class="text-primary/60">[INFO] System access level: ADMINISTRATOR</div>
+<div class="flex gap-3 mt-4">
+<span class="text-primary">guest@ctrlsec:~$</span>
+<span class="text-white">gen_report --output=terminal</span>
+</div>
+<div class="text-primary/80 mt-2">
+                    +--------------------------------------------+<br/>
+                    |   SECURITY AUDIT: CRITICAL INFRASTRUCTURE  |<br/>
+                    +--------------------------------------------+<br/>
+                    | STATUS: COMPROMISED (SIMULATED)            |<br/>
+                    | NODES_AFFECTED: 1,402                      |<br/>
+                    | RISK_LEVEL: CAT_5_EMERGENCY                |<br/>
+                    +--------------------------------------------+
+                </div>
+<!-- Input Line with Blinking Cursor -->
+<div class="flex gap-3 mt-4">
+<span class="text-primary">guest@ctrlsec:~$</span>
+<span class="w-2 h-5 bg-primary animate-[pulse_1s_infinite] shadow-[0_0_8px_rgba(0,255,38,0.8)]"></span>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center">
+<p class="text-white/40 font-mono text-xs italic tracking-tightest">* This is a non-interactive simulation of our automated security auditing interface.</p>
+</div>
+</div>
+</section><section class="px-6 lg:px-20 py-24 border-t border-border-muted bg-primary/[0.01]">
+<div class="max-w-[1440px] mx-auto grid lg:grid-cols-2 gap-20 items-center">
 <div>
-<h3 class="font-display text-2xl font-bold text-white mb-2 group-hover:text-primary transition-colors">Managed VDP</h3>
-<p class="font-mono text-sm text-text-dim uppercase tracking-wide">Structured Disclosure</p>
-<p class="font-body text-text-dim mt-4 text-sm leading-relaxed">
-                                Threat infrastructure management. Technical breakdown of vulnerabilities with structured data tables.
-                            </p>
+<div class="font-mono text-primary text-[10px] tracking-[0.4em] mb-4">DEVELOPER RESOURCES</div>
+<h2 class="text-4xl font-black tracking-tighter uppercase mb-6 tracking-tightest">Deploy Containment <br/><span class="text-warning">Logic</span></h2>
+<p class="text-white/60 mb-8 tracking-tight">Deploy security infrastructure programmatically. Our robust REST API and Python SDK allow for seamless integration of automated vulnerability disclosures and node monitoring into your existing CI/CD pipelines.</p>
+<ul class="space-y-4 font-mono text-xs text-white/50">
+<li class="flex items-center gap-3"><span class="text-primary">[+]</span> RESTful Endpoints for Node Management</li>
+<li class="flex items-center gap-3"><span class="text-primary">[+]</span> Real-time Webhook Notifications</li>
+<li class="flex items-center gap-3"><span class="text-primary">[+]</span> OAuth2 Authentication Framework</li>
+</ul>
 </div>
-<div class="flex items-center gap-2 text-primary text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-<span>VIEW VULNERABILITIES</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<div class="relative">
+<div class="bg-terminal-gray border border-primary/30 rounded-lg overflow-hidden shadow-2xl shadow-primary/5">
+<!-- Terminal Header -->
+<div class="bg-border-muted/50 border-b border-primary/20 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
+</div>
+<span class="font-mono text-[10px] text-white/40 ml-4">api_integration_sample.py</span>
+</div>
+<button class="flex items-center gap-1.5 text-primary/60 hover:text-primary transition-colors font-mono text-[10px] uppercase">
+<span class="material-symbols-outlined text-xs">content_copy</span>
+                        Copy
+                    </button>
+</div>
+<!-- Code Body -->
+<div class="p-6 font-mono text-sm leading-relaxed overflow-x-auto">
+<pre class="text-white/80"><code><span class="text-primary">import</span> ctrlsec
+
+<span class="text-white/40"># Initialize secure client</span>
+client = ctrlsec.<span class="text-primary">Client</span>(api_key=<span class="text-primary">"SK_LIVE_0x7E3..."</span>)
+
+<span class="text-white/40"># Trigger perimeter scan</span>
+response = client.scans.<span class="text-primary">initiate</span>({
+    <span class="text-primary">"target"</span>: <span class="text-primary">"global_perimeter"</span>,
+    <span class="text-primary">"depth"</span>: <span class="text-primary">4</span>,
+    <span class="text-primary">"priority"</span>: <span class="text-primary">"CRITICAL"</span>
+})
+
+<span class="text-primary">print</span>(f<span class="text-primary">"[SUCCESS] Scan ID: {response.id}"</span>)
+<span class="text-primary">print</span>(f<span class="text-primary">"[STATUS] {response.status}"</span>)</code></pre>
 </div>
 </div>
-</a>
-<!-- Card 3: Advisory -->
-<a class="group relative bg-background-dark p-8 md:p-12 hover-cell block h-full" href="#">
-<div class="flex flex-col h-full justify-between gap-12">
-<div class="flex justify-between items-start">
-<span class="material-symbols-outlined text-4xl text-text-dim group-hover:text-primary transition-colors">explore</span>
-<span class="font-mono text-xs border border-border-color px-2 py-1 text-text-dim">MOD_03</span>
-</div>
-<div>
-<h3 class="font-display text-2xl font-bold text-white mb-2 group-hover:text-primary transition-colors">Advisory</h3>
-<p class="font-mono text-sm text-text-dim uppercase tracking-wide">Strategic Architecture</p>
-<p class="font-body text-text-dim mt-4 text-sm leading-relaxed">
-                                Founder credentials and mission parameters. We build the philosophical grid for secure growth.
-                            </p>
-</div>
-<div class="flex items-center gap-2 text-primary text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-[-10px] group-hover:translate-x-0">
-<span>CONSULT ARCHITECTS</span>
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
+<!-- Decorative Background Element -->
+<div class="absolute -z-10 -bottom-6 -right-6 w-full h-full border border-primary/10 rounded-lg pointer-events-none"></div>
 </div>
 </div>
-</a>
+</section><section class="px-6 lg:px-20 py-20">
+<div class="bg-background-dark border border-primary/20 relative overflow-hidden rounded-sm p-12 lg:p-20 text-center max-w-6xl mx-auto">
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#00ff26 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="relative z-10 flex flex-col items-center gap-8">
+<h2 class="text-4xl lg:text-6xl font-black tracking-tighter uppercase tracking-tightest">Ready to <span class="text-primary">Standardize</span>?</h2>
+<p class="text-white/70 max-w-xl text-lg tracking-tight">Download our tactical documentation or start a conversation with our implementation team to secure your perimeter.</p>
+<div class="flex flex-wrap justify-center gap-4">
+<button class="bg-primary text-black font-black px-10 py-4 rounded-sm hover:brightness-110 transition-all glow-green uppercase text-sm tracking-widest">
+                            Request Deployment
+                        </button>
+<button class="border border-white/20 text-white font-black px-10 py-4 rounded-sm hover:bg-white/5 transition-all uppercase text-sm tracking-widest">
+                            Technical Docs
+                        </button>
+</div>
+</div>
+<!-- UI corner markers -->
+<div class="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-primary/30"></div>
+<div class="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-primary/30"></div>
+<div class="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-primary/30"></div>
+<div class="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-primary/30"></div>
 </div>
 </section>
-<!-- FOOTER / TRUST TICKER -->
-<div class="w-full bg-primary overflow-hidden border-t border-border-color py-3">
-<div class="relative w-full flex overflow-x-hidden">
-<div class="animate-marquee whitespace-nowrap flex items-center">
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-</div>
-<!-- Duplicate for seamless loop -->
-<div class="absolute top-0 animate-marquee2 whitespace-nowrap flex items-center hidden">
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-<span class="text-black font-display font-bold text-lg mx-4">INTEGRITY // STRUCTURE // VERIFICATION //</span>
-</div>
-</div>
-</div>
 </main>
-<!-- Simple JS for Marquee Smoothness (Optional Fallback) and ASCII Rotation -->
-<script>
-        // No JS logic required for CSS animations, but placeholder for interactions if needed.
-    </script>
+<!-- Footer with Ticker Tape -->
+<footer class="bg-background-dark border-t border-border-muted overflow-hidden">
+<!-- Ticker Tape -->
+<div class="py-4 border-b border-border-muted flex whitespace-nowrap overflow-hidden bg-warning/10">
+<div class="flex gap-20 items-center animate-ticker font-mono font-bold text-xs text-primary/80 tracking-[0.4em] uppercase">
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+<span class="">ALERT // CONTAIN // ELIMINATE</span>
+</div>
+</div>
+<div class="px-6 lg:px-20 py-12 max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col items-center md:items-start gap-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-1 rounded-sm">
+<svg class="w-4 h-4 text-primary" fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 4H30.6666V17.3334H17.3334V30.6666H4V44H44V4Z"></path>
+</svg>
+</div>
+<span class="text-sm font-black tracking-tighter uppercase font-mono">ctrlsec.io</span>
+</div>
+<p class="text-white/30 text-[10px] font-mono uppercase tracking-widest tracking-tight">© 2024 CTRLSEC OPERATIONS. ALL RIGHTS RESERVED.</p>
+</div>
+<div class="hidden lg:block font-mono text-[8px] text-primary/20 uppercase tracking-[0.2em] mb-2">Secure_Terminal_v4.0.1 // Node_ID: 0x7E3 // Buffer_Status: Nominal</div><div class="flex gap-10 font-mono text-[10px] text-white/40 uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">Privacy_Layer</a>
+<a class="hover:text-primary transition-colors" href="#">Legal_Notice</a>
+<a class="hover:text-primary transition-colors" href="#">PGP_Key</a>
+</div>
+<div class="flex gap-4">
+<a class="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-base">terminal</span>
+</a>
+<a class="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-base">code</span>
+</a>
+<a class="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:bg-primary/10 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-base">rss_feed</span>
+</a>
+</div>
+</div>
+</footer>
+<style>
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-ticker {
+            animation: ticker 30s linear infinite;
+        }
+    
+        @keyframes glitch {
+            0% { opacity: 1; transform: translateX(0); }
+            10% { opacity: 0.8; transform: translateX(-2px); }
+            20% { opacity: 1; transform: translateX(2px); }
+            30% { opacity: 0.9; transform: translateX(0); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+        .corner-bracket {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-color: rgba(0, 255, 38, 0.4);
+        }
+        .scan-bar-move {
+            animation: scanMove 4s linear infinite;
+        }
+        @keyframes scanMove {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(1000%); }
+        }
+    </style>
 </body></html>
