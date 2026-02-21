@@ -12,11 +12,11 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#00FF00", // Matrix Green as requested
+                        "primary": "#0fb369", // Signal Green
                         "warning": "#eab308",
                         "danger": "#ef4444",
                         "background-light": "#f6f8f7",
-                        "background-dark": "#0D0D0D", // Deep Black as requested
+                        "background-dark": "#0B0B0B", // Matte Black
                         "surface": "#141414",
                         "grid": "#1A1A1A",
                     },
@@ -36,7 +36,7 @@
     </script>
 <style>
         body {
-            background-color: #0D0D0D;
+            background-color: #0B0B0B;
             background-image: 
                 linear-gradient(to right, #1A1A1A 1px, transparent 1px),
                 linear-gradient(to bottom, #1A1A1A 1px, transparent 1px);
@@ -65,7 +65,7 @@
             background-size: 4px 4px;
         }
         .radar-sweep {
-            background: conic-gradient(from 0deg, transparent 0deg, rgba(0, 255, 0, 0.2) 90deg, transparent 180deg);
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(15, 179, 105, 0.2) 90deg, transparent 180deg);
             border-radius: 50%;
             width: 100%;
             height: 100%;
@@ -74,20 +74,20 @@
             box-shadow: 0 0 0 1px #1A1A1A;
         }
         .glitch-hover:hover {
-            box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
-            border-color: #00FF00;
+            box-shadow: 0 0 10px rgba(15, 179, 105, 0.4);
+            border-color: #0fb369;
         }
         ::-webkit-scrollbar {
             width: 4px;
         }
         ::-webkit-scrollbar-track {
-            background: #0D0D0D;
+            background: #0B0B0B;
         }
         ::-webkit-scrollbar-thumb {
             background: #1A1A1A;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #00FF00;
+            background: #0fb369;
         }
         .correlation-line {
             position: absolute;
@@ -99,6 +99,9 @@
             opacity: 0.5;
             z-index: 0;
         }
+        .log-entry:hover .log-timestamp {
+            color: #ef4444;
+        }
     </style>
 </head>
 <body class="text-slate-100 selection:bg-primary selection:text-background-dark">
@@ -109,7 +112,7 @@
 <div class="w-6 h-6 bg-primary flex items-center justify-center">
 <span class="material-symbols-outlined text-background-dark text-xs">terminal</span>
 </div>
-<span class="hidden lg:block font-bold tracking-tighter text-lg font-display text-primary">ctrlsec</span>
+<span class="hidden lg:block font-bold tracking-tighter text-lg font-display">ctrlsec</span>
 </div>
 <nav class="flex-1 py-4 space-y-1">
 <a class="flex items-center gap-3 px-6 py-3 text-primary bg-primary/10 border-r-2 border-primary" href="#">
@@ -130,29 +133,25 @@
 </a>
 </nav>
 <div class="p-4 space-y-3">
-<div class="hidden lg:block p-3 bg-red-600/10 text-white text-[10px] border border-red-500 shadow-[0_0_10px_rgba(220,38,38,0.2)]">
-<div class="flex justify-between items-center mb-2 pb-2 border-b border-red-500/30">
-<strong class="uppercase text-red-500 font-bold">manual_auth_req</strong>
-<span class="material-symbols-outlined text-xs animate-pulse text-red-500">lock</span>
+<div class="hidden lg:block p-3 bg-red-600 text-white text-[10px] border border-red-400 shadow-[0_0_15px_rgba(220,38,38,0.6)] animate-[pulse_4s_ease-in-out_infinite]">
+<div class="flex justify-between items-center mb-1 pb-1 border-b border-white/30">
+<strong class="uppercase tracking-wide font-black">Auth Required</strong>
+<span class="material-symbols-outlined text-sm font-bold animate-ping">warning</span>
 </div>
-<div class="flex flex-col gap-1 mb-2">
-<span class="font-bold text-red-400">CVE-2024-9901</span>
-<span class="text-[9px] text-slate-400">critical_kernel_exploit</span>
-</div>
-<button class="w-full py-1.5 bg-red-500 text-black hover:bg-white hover:text-red-600 transition-colors uppercase font-bold text-[9px] flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-[10px]">key</span>
-                        authorize_patch
-                    </button>
+<p class="mb-3 opacity-90 mt-2 font-mono leading-tight">CRITICAL: CVE-2024-9120 patch blocked by policy override.</p>
+<button class="w-full py-2 bg-black text-white hover:bg-white hover:text-red-600 transition-colors uppercase font-bold text-[9px] border border-white tracking-wider">
+                    Authorize Patch
+                </button>
 </div>
 </div>
 <div class="p-4 border-t border-grid mt-auto">
 <div class="flex items-center gap-3 opacity-50 grayscale hover:grayscale-0 cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30">
-<span class="material-symbols-outlined text-sm text-primary">person</span>
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">person</span>
 </div>
 <div class="hidden lg:block text-[10px]">
-<p class="font-bold text-primary">admin_01</p>
-<p class="text-slate-500">l3_root_access</p>
+<p class="font-bold">admin_01</p>
+<p class="text-primary">l3_access</p>
 </div>
 </div>
 </div>
@@ -161,13 +160,12 @@
 <header class="h-16 border-b border-grid flex items-center justify-between px-8 bg-background-dark/80 backdrop-blur-md">
 <div class="flex items-center gap-8">
 <div>
-<h2 class="text-xs text-primary/50 font-mono">systemic_dither_v3.2</h2>
+<h2 class="text-xs text-slate-500 font-mono">systemic_dither_v1.0</h2>
 <h1 class="text-lg font-display font-bold text-slate-100 uppercase tracking-widest">unified_security_control_center</h1>
 </div>
 <div class="hidden md:flex gap-4">
-<div class="px-3 py-1 bg-primary/5 border border-primary/20 text-[10px] flex items-center gap-2">
-<span class="w-1.5 h-1.5 bg-primary animate-pulse"></span>
-<span class="text-primary font-bold">status:</span> nominal
+<div class="px-3 py-1 bg-primary/5 border border-primary/20 text-[10px]">
+<span class="text-primary">status:</span> nominal
                         </div>
 <div class="px-3 py-1 bg-slate-500/5 border border-slate-500/20 text-[10px]">
 <span class="text-slate-400">uptime:</span> 04:21:08
@@ -175,11 +173,10 @@
 </div>
 </div>
 <div class="flex items-center gap-4">
-<button class="px-4 py-1 border border-red-500/50 text-red-500 text-[10px] font-bold hover:bg-red-500 hover:text-white transition-all uppercase flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">gpp_bad</span>
+<button class="px-4 py-1 border border-red-500/50 text-red-500 text-[10px] font-bold hover:bg-red-500 hover:text-white transition-all uppercase">
                         emergency_stop
                     </button>
-<button class="w-8 h-8 flex items-center justify-center border border-grid text-slate-400 hover:text-primary hover:border-primary transition-colors">
+<button class="w-8 h-8 flex items-center justify-center border border-grid text-slate-400 hover:text-primary">
 <span class="material-symbols-outlined text-lg">notifications</span>
 </button>
 </div>
@@ -189,7 +186,7 @@
 <div class="p-6 bg-surface border border-grid dither-bg relative overflow-hidden group glitch-hover">
 <p class="text-[10px] text-slate-500 mb-2">/global_health_index</p>
 <div class="flex items-end justify-between">
-<h3 class="text-5xl font-display font-bold text-primary">94.2%</h3>
+<h3 class="text-5xl font-display font-bold text-primary">94.2</h3>
 <div class="text-right">
 <p class="text-primary text-xs font-bold">+1.2%</p>
 <p class="text-[8px] text-slate-500">last_24h</p>
@@ -247,100 +244,107 @@
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 <div class="lg:col-span-1 bg-surface border border-grid p-6 relative flex flex-col">
-<p class="text-[10px] text-primary mb-6 flex items-center gap-2 uppercase tracking-wider font-bold">
-<span class="material-symbols-outlined text-sm animate-spin-slow">settings</span>
-                            system_wide_overrides
+<p class="text-[10px] text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-wider font-bold">
+<span class="material-symbols-outlined text-sm">tune</span>
+                            /system_wide_overrides
                         </p>
 <div class="space-y-4 flex-1">
-<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors group">
+<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors">
 <div>
-<p class="text-xs font-bold text-slate-200 group-hover:text-primary transition-colors">global_firewall_lock</p>
+<p class="text-xs font-bold text-slate-200">global_firewall_lock</p>
 <p class="text-[9px] text-slate-500">deny_all_ingress_traffic</p>
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
 <input class="sr-only peer" type="checkbox" value=""/>
-<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-sm peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-sm after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
+<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-600"></div>
 </label>
 </div>
-<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors group">
+<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors">
 <div>
-<p class="text-xs font-bold text-slate-200 group-hover:text-primary transition-colors">auto_quarantine</p>
+<p class="text-xs font-bold text-slate-200">auto_quarantine</p>
 <p class="text-[9px] text-slate-500">isolate_compromised_hosts</p>
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
 <input checked="" class="sr-only peer" type="checkbox" value=""/>
-<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-sm peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-sm after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
 </label>
 </div>
-<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors group">
+<div class="flex items-center justify-between p-3 border border-grid bg-background-dark/50 hover:border-primary/50 transition-colors">
 <div>
-<p class="text-xs font-bold text-slate-200 group-hover:text-primary transition-colors">enhanced_logging</p>
+<p class="text-xs font-bold text-slate-200">enhanced_logging</p>
 <p class="text-[9px] text-slate-500">trace_level: verbose</p>
 </div>
 <label class="relative inline-flex items-center cursor-pointer">
 <input checked="" class="sr-only peer" type="checkbox" value=""/>
-<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-sm peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-sm after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+<div class="w-9 h-5 bg-grid peer-focus:outline-none peer-focus:ring-0 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
 </label>
 </div>
 <button class="w-full mt-4 py-3 bg-red-600/10 border border-red-600 text-red-500 hover:bg-red-600 hover:text-white transition-all uppercase text-xs font-bold flex items-center justify-center gap-2 group">
-<span class="material-symbols-outlined text-sm group-hover:animate-spin">lock_reset</span>
+<span class="material-symbols-outlined text-sm group-hover:rotate-180 transition-transform">lock_reset</span>
                                 flush_dns_cache
                              </button>
 </div>
 </div>
 <div class="lg:col-span-2 bg-surface border border-grid p-0 flex flex-col overflow-hidden">
 <div class="p-4 border-b border-grid flex justify-between items-center bg-background-dark/50">
-<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">/vulnerability_database_view</p>
-<div class="flex gap-2">
-<button class="text-[10px] text-slate-400 hover:text-primary bg-grid px-2 py-1 border border-transparent hover:border-primary/30 transition-all">filter: critical_only</button>
-<span class="text-slate-600 py-1">|</span>
-<button class="text-[10px] text-primary hover:text-white bg-primary/10 px-2 py-1 border border-primary/30">export_csv</button>
+<p class="text-[10px] text-slate-500 uppercase tracking-wider font-bold">/vulnerability_database_view</p>
+<div class="flex gap-3">
+<div class="flex items-center gap-1 px-2 py-1 bg-grid border border-white/5 rounded-sm">
+<span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+<span class="text-[9px] text-slate-300">critical: 1</span>
+</div>
+<button class="text-[10px] text-slate-400 hover:text-primary transition-colors">filter: all</button>
+<span class="text-slate-600">|</span>
+<button class="text-[10px] text-primary hover:text-white transition-colors">export_csv</button>
 </div>
 </div>
-<div class="flex-1 overflow-x-auto">
+<div class="flex-1 overflow-x-auto custom-scrollbar">
 <table class="w-full text-left text-[10px]">
-<thead class="bg-grid/50 text-slate-400 font-mono uppercase sticky top-0 backdrop-blur-sm">
+<thead class="bg-grid text-slate-400 font-mono uppercase sticky top-0 z-10">
 <tr>
-<th class="px-4 py-3 font-medium text-slate-500">cve_id</th>
-<th class="px-4 py-3 font-medium text-slate-500">description</th>
-<th class="px-4 py-3 font-medium text-slate-500">target</th>
-<th class="px-4 py-3 font-medium text-right text-slate-500">mitigation_status</th>
+<th class="px-4 py-3 font-medium border-b border-grid">cve_id</th>
+<th class="px-4 py-3 font-medium border-b border-grid">description</th>
+<th class="px-4 py-3 font-medium border-b border-grid">target</th>
+<th class="px-4 py-3 font-medium border-b border-grid text-right">mitigation_status</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-grid bg-background-dark/30">
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
-<td class="px-4 py-3 font-bold text-red-500 font-mono">CVE-2024-9120</td>
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-red-500">
+<td class="px-4 py-3 font-bold text-red-500 font-mono flex items-center gap-2">
+<span class="material-symbols-outlined text-[12px]">bug_report</span>
+                                            CVE-2024-9120
+                                        </td>
 <td class="px-4 py-3 text-slate-300">buffer_overflow_in_auth_module_v2</td>
 <td class="px-4 py-3 text-slate-500 font-mono">gateway-04</td>
 <td class="px-4 py-3 text-right">
-<span class="inline-block px-2 py-0.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-sm font-bold animate-pulse">patch_pending</span>
+<span class="inline-block px-2 py-0.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-sm">patch_pending</span>
 </td>
 </tr>
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-yellow-500">
 <td class="px-4 py-3 font-bold text-yellow-500 font-mono">CVE-2023-4401</td>
 <td class="px-4 py-3 text-slate-300">privilege_escalation_via_cron</td>
 <td class="px-4 py-3 text-slate-500 font-mono">all_linux_nodes</td>
 <td class="px-4 py-3 text-right">
-<span class="inline-block px-2 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-sm">deploying</span>
+<span class="inline-block px-2 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-sm animate-pulse">deploying...</span>
 </td>
 </tr>
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
-<td class="px-4 py-3 font-bold text-slate-400 font-mono">CVE-2023-0092</td>
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
+<td class="px-4 py-3 font-bold text-slate-400 font-mono group-hover:text-white">CVE-2023-0092</td>
 <td class="px-4 py-3 text-slate-300">xss_vulnerability_in_dashboard</td>
 <td class="px-4 py-3 text-slate-500 font-mono">web-internal</td>
 <td class="px-4 py-3 text-right">
 <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm">mitigated</span>
 </td>
 </tr>
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
-<td class="px-4 py-3 font-bold text-slate-400 font-mono">CVE-2022-8812</td>
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
+<td class="px-4 py-3 font-bold text-slate-400 font-mono group-hover:text-white">CVE-2022-8812</td>
 <td class="px-4 py-3 text-slate-300">sql_injection_vector_api</td>
 <td class="px-4 py-3 text-slate-500 font-mono">db-shard-02</td>
 <td class="px-4 py-3 text-right">
 <span class="inline-block px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm">mitigated</span>
 </td>
 </tr>
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-yellow-500">
 <td class="px-4 py-3 font-bold text-yellow-500 font-mono">CVE-2024-1002</td>
 <td class="px-4 py-3 text-slate-300">deserialization_remote_code</td>
 <td class="px-4 py-3 text-slate-500 font-mono">app-worker-09</td>
@@ -348,12 +352,12 @@
 <span class="inline-block px-2 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-sm">scanning</span>
 </td>
 </tr>
-<tr class="hover:bg-primary/5 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-primary">
-<td class="px-4 py-3 font-bold text-slate-400 font-mono">CVE-2024-0019</td>
-<td class="px-4 py-3 text-slate-300">prototype_pollution_nodejs</td>
-<td class="px-4 py-3 text-slate-500 font-mono">frontend-proxy-01</td>
+<tr class="hover:bg-grid/40 transition-colors group cursor-pointer border-l-2 border-transparent hover:border-slate-500">
+<td class="px-4 py-3 font-bold text-slate-500 font-mono">CVE-2021-44228</td>
+<td class="px-4 py-3 text-slate-500">log4j_remote_code_execution</td>
+<td class="px-4 py-3 text-slate-600 font-mono">legacy-sys-01</td>
 <td class="px-4 py-3 text-right">
-<span class="inline-block px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded-sm">mitigated</span>
+<span class="inline-block px-2 py-0.5 bg-slate-800 text-slate-500 border border-slate-700 rounded-sm">archived</span>
 </td>
 </tr>
 </tbody>
@@ -363,72 +367,108 @@
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 <div class="bg-surface border border-grid p-6">
-<p class="text-[10px] text-slate-500 mb-6 uppercase tracking-wider">/autonomous_patching_queue</p>
+<p class="text-[10px] text-slate-500 mb-6 flex items-center gap-2 uppercase tracking-wider font-bold">
+<span class="material-symbols-outlined text-sm">autorenew</span>
+                        /autonomous_patching_queue
+                    </p>
 <div class="space-y-6">
 <div class="space-y-2">
 <div class="flex justify-between text-xs font-mono">
-<span>autonomous_patch_089</span>
+<span class="text-white">autonomous_patch_089</span>
 <span class="text-primary font-bold">76%</span>
 </div>
-<div class="h-1 w-full bg-grid relative overflow-hidden">
+<div class="h-1.5 w-full bg-grid relative overflow-hidden">
+<div class="absolute inset-0 bg-primary/20 animate-pulse"></div>
 <div class="h-full bg-primary relative" style="width: 76%">
-<div class="absolute inset-0 bg-white/20 w-full animate-[shimmer_2s_infinite]"></div>
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-white shadow-[0_0_10px_white]"></div>
 </div>
 </div>
-<div class="flex justify-between items-center text-[9px] text-slate-500">
+<p class="text-[9px] text-slate-500 flex justify-between">
 <span>deploying_to: sector_7_datacenter</span>
 <span class="text-primary">status: migrating_shards</span>
-</div>
+</p>
 </div>
 <div class="space-y-2">
 <div class="flex justify-between text-xs font-mono">
-<span>kernel_update_v5.4</span>
+<span class="text-white">kernel_update_v5.4</span>
 <span class="text-slate-500">22%</span>
 </div>
-<div class="h-1 w-full bg-grid">
+<div class="h-1.5 w-full bg-grid">
 <div class="h-full bg-slate-500" style="width: 22%"></div>
 </div>
-<p class="text-[9px] text-slate-500">pending: node_reboot_required | affected: 142_nodes</p>
+<p class="text-[9px] text-slate-500 flex justify-between">
+<span>pending: node_reboot_required</span>
+<span class="text-yellow-500">affected: 142_nodes</span>
+</p>
 </div>
-<div class="space-y-2">
+<div class="space-y-2 opacity-60">
 <div class="flex justify-between text-xs font-mono opacity-50">
 <span>firewall_rules_rebuild</span>
 <span class="text-slate-500">queued</span>
 </div>
-<div class="h-1 w-full bg-grid"></div>
+<div class="h-1.5 w-full bg-grid"></div>
 <p class="text-[9px] text-slate-500">priority: med | estimate: 12m</p>
 </div>
 </div>
 </div>
 <div class="bg-background-dark border border-grid p-4 h-[240px] flex flex-col font-mono text-[10px] relative">
 <div class="flex justify-between items-center mb-4 border-b border-grid pb-2">
-<p class="text-slate-500 uppercase tracking-wider">/system_log_stream</p>
+<p class="text-slate-500 uppercase tracking-wider font-bold">/system_log_stream</p>
 <div class="flex items-center gap-2">
-<span class="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
-<span class="text-[9px] text-yellow-500 font-bold">correlation_engine: active</span>
+<span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+<span class="text-[9px] text-yellow-500 font-bold tracking-widest uppercase">correlation_engine: active</span>
 </div>
 </div>
-<div class="flex-1 overflow-y-auto space-y-3 pl-4 relative">
-<div class="relative pl-6 py-3 border-l-2 border-yellow-500 bg-yellow-500/5 group">
-<div class="absolute -left-[9px] top-3 w-4 h-4 bg-background-dark border-2 border-yellow-500 rounded-full flex items-center justify-center">
-<span class="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse"></span>
-</div>
-<div class="flex items-center justify-between mb-2">
-<p class="text-yellow-500 font-bold uppercase tracking-wide">&gt;&gt;&gt; correlation_alert: brute_force_pattern</p>
-<span class="px-1.5 py-0.5 bg-yellow-500 text-black text-[8px] font-bold uppercase">Critical</span>
+<div class="flex-1 overflow-y-auto space-y-3 pl-2 relative custom-scrollbar">
+<div class="relative pl-8 py-3 border-l-2 border-yellow-500 bg-gradient-to-r from-yellow-500/5 to-transparent pr-2">
+<div class="absolute -left-[5px] top-4 w-2 h-2 bg-yellow-500 rounded-full shadow-[0_0_10px_#eab308]"></div>
+<div class="flex items-center gap-2 mb-2">
+<span class="px-1.5 py-0.5 bg-yellow-500 text-black font-bold text-[9px] uppercase">Correlation Alert</span>
+<span class="text-yellow-500 font-bold uppercase tracking-wider">&gt;&gt; brute_force_pattern_detected</span>
 </div>
 <div class="space-y-1 relative">
-<div class="absolute left-[-1.6rem] top-2 bottom-2 w-0.5 bg-yellow-500/20"></div>
-<p class="text-slate-300 mb-0.5 flex gap-2"><span class="text-primary font-bold w-16">[20:41:02]</span> <span class="text-red-400">alert:</span> unauthorized_handshake_blocked -&gt; ip: 192.168.1.104</p>
-<p class="text-slate-400 mb-0.5 flex gap-2"><span class="text-primary font-bold w-16">[20:41:01]</span> <span class="text-yellow-500">alert:</span> failed_auth_attempt (x4) -&gt; user: admin</p>
-<p class="text-slate-500 flex gap-2"><span class="text-primary font-bold w-16">[20:41:00]</span> <span class="text-slate-400">info:</span> connection_opened -&gt; origin: unknown_proxy</p>
+<div class="absolute left-[-14px] top-2 bottom-2 w-px bg-yellow-500/30"></div>
+<p class="text-slate-300 flex gap-2 log-entry">
+<span class="text-primary w-16 opacity-70 log-timestamp">[20:41:02]</span>
+<span class="text-red-400">alert: unauthorized_handshake_blocked</span>
+<span class="text-slate-500">-&gt; src_ip: 192.168.1.104</span>
+</p>
+<p class="text-slate-300 flex gap-2 log-entry">
+<span class="text-primary w-16 opacity-70 log-timestamp">[20:41:01]</span>
+<span class="text-orange-400">alert: failed_auth_attempt (x4)</span>
+<span class="text-slate-500">-&gt; user: admin</span>
+</p>
+<p class="text-slate-300 flex gap-2 log-entry">
+<span class="text-primary w-16 opacity-70 log-timestamp">[20:41:00]</span>
+<span class="text-slate-400">info: connection_opened</span>
+<span class="text-slate-500">-&gt; origin: unknown_proxy</span>
+</p>
+</div>
+<div class="mt-2 pl-0">
+<button class="text-[9px] text-yellow-500 hover:text-white border border-yellow-500/30 px-2 py-0.5 hover:bg-yellow-500/20 transition-colors uppercase">view_attack_vector_graph</button>
 </div>
 </div>
-<div class="space-y-1 pl-6 border-l border-grid/50">
-<p class="text-slate-400 flex gap-2"><span class="text-slate-600 w-16">[20:40:58]</span> system: sector_3_load_balancer_rebalanced -&gt; shift: +4.2%</p>
-<p class="text-slate-400 flex gap-2"><span class="text-slate-600 w-16">[20:40:55]</span> info: autonomous_patch_089 -&gt; shard_04_migrated_success</p>
-<p class="text-slate-400 flex gap-2"><span class="text-red-500/70 w-16">[20:40:51]</span> warning: latency_threshold_exceeded -&gt; node: sfo-09</p>
-<p class="text-slate-400 flex gap-2"><span class="text-slate-600 w-16">[20:40:48]</span> system: cron_job_daily_backup -&gt; completed_successfully</p>
+<div class="space-y-1 pl-8 border-l border-grid/50 py-1">
+<p class="text-slate-400 flex gap-2 log-entry">
+<span class="text-slate-600 w-16">[20:40:58]</span>
+<span>system: sector_3_load_balancer_rebalanced</span>
+<span class="text-slate-600">-&gt; shift: +4.2%</span>
+</p>
+<p class="text-slate-400 flex gap-2 log-entry">
+<span class="text-slate-600 w-16">[20:40:55]</span>
+<span>info: autonomous_patch_089</span>
+<span class="text-primary">-&gt; shard_04_migrated_success</span>
+</p>
+<p class="text-slate-400 flex gap-2 log-entry">
+<span class="text-slate-600 w-16">[20:40:51]</span>
+<span class="text-red-500">warning: latency_threshold_exceeded</span>
+<span class="text-slate-600">-&gt; node: sfo-09</span>
+</p>
+<p class="text-slate-400 flex gap-2 log-entry">
+<span class="text-slate-600 w-16">[20:40:48]</span>
+<span>system: cron_job_daily_backup</span>
+<span class="text-slate-600">-&gt; completed_successfully</span>
+</p>
 </div>
 </div>
 </div>
@@ -437,67 +477,58 @@
 </main>
 <aside class="hidden xl:flex w-64 border-l border-grid bg-background-dark flex-col">
 <div class="p-6 border-b border-grid">
-<p class="text-[10px] text-slate-500 mb-4 uppercase tracking-wider">/infrastructure_status</p>
+<p class="text-[10px] text-slate-500 mb-4 uppercase tracking-wider font-bold">/infrastructure_status</p>
 <div class="space-y-4">
-<div class="flex justify-between items-center group cursor-default">
-<span class="text-xs group-hover:text-primary transition-colors">soc_simulation</span>
-<span class="flex items-center gap-2 text-primary text-[10px] bg-primary/10 px-2 py-0.5 border border-primary/20">
+<div class="flex justify-between items-center group cursor-pointer hover:bg-white/5 p-1 -mx-1 rounded">
+<span class="text-xs text-slate-300 group-hover:text-white">soc_simulation</span>
+<span class="flex items-center gap-1 text-primary text-[10px]">
 <span class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
                             active
                         </span>
 </div>
-<div class="flex justify-between items-center group cursor-default">
-<span class="text-xs group-hover:text-primary transition-colors">primary_database</span>
-<span class="text-[10px] text-slate-400">98%_health</span>
+<div class="flex justify-between items-center group cursor-pointer hover:bg-white/5 p-1 -mx-1 rounded">
+<span class="text-xs text-slate-300 group-hover:text-white">primary_database</span>
+<span class="text-[10px] text-slate-500">98%_health</span>
 </div>
-<div class="flex justify-between items-center group cursor-default">
-<span class="text-xs group-hover:text-primary transition-colors">edge_caching</span>
+<div class="flex justify-between items-center group cursor-pointer hover:bg-white/5 p-1 -mx-1 rounded">
+<span class="text-xs text-slate-300 group-hover:text-white">edge_caching</span>
 <span class="text-[10px] text-primary">optimized</span>
 </div>
-<div class="flex justify-between items-center group cursor-default">
-<span class="text-xs group-hover:text-primary transition-colors">threat_intel_sync</span>
-<span class="text-[10px] text-slate-500 italic">syncing...</span>
+<div class="flex justify-between items-center group cursor-pointer hover:bg-white/5 p-1 -mx-1 rounded">
+<span class="text-xs text-slate-300 group-hover:text-white">threat_intel_sync</span>
+<span class="text-[10px] text-slate-500 flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px] animate-spin">sync</span>
+                                syncing...
+                            </span>
 </div>
 </div>
 </div>
-<div class="p-6 flex-1 space-y-6">
-<div>
-<p class="text-[10px] text-slate-500 mb-4 uppercase tracking-wider">/critical_patch_auth</p>
-<div class="p-4 bg-red-500/5 border border-red-500/40 relative overflow-hidden group">
-<div class="absolute top-0 right-0 p-2 opacity-50">
-<span class="material-symbols-outlined text-red-500 text-4xl opacity-20 group-hover:opacity-40 transition-opacity">lock_person</span>
-</div>
-<p class="text-red-500 font-bold text-xs mb-2">CVE-2024-9120</p>
-<p class="text-[10px] text-slate-400 mb-3 leading-relaxed">Remote code execution in payment gateway module. Requires manual override.</p>
-<div class="flex gap-2">
-<button class="flex-1 py-1.5 bg-red-600 text-white text-[10px] font-bold hover:bg-white hover:text-red-600 transition-colors uppercase border border-transparent">
-                                authorize
-                            </button>
-<button class="px-2 py-1.5 border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors">
-<span class="material-symbols-outlined text-sm">info</span>
-</button>
-</div>
-</div>
-</div>
-<div>
-<p class="text-[10px] text-slate-500 mb-4 uppercase tracking-wider">/active_incidents</p>
+<div class="p-6 flex-1 overflow-y-auto">
+<p class="text-[10px] text-slate-500 mb-4 uppercase tracking-wider font-bold">/active_incidents</p>
 <div class="space-y-3">
-<div class="p-3 bg-red-500/5 border-l-2 border-red-500 text-[10px] hover:bg-red-500/10 transition-colors cursor-pointer">
+<div class="p-3 bg-red-500/5 border-l-2 border-red-500 text-[10px] hover:bg-red-500/10 transition-colors cursor-pointer group">
 <div class="flex justify-between items-start mb-1">
-<p class="font-bold text-red-500">brute_force_detected</p>
-<span class="text-[8px] bg-red-500 text-black px-1 font-bold">HIGH</span>
+<p class="font-bold text-red-500 group-hover:underline">brute_force_detected</p>
+<span class="text-[8px] border border-red-500/30 text-red-500 px-1">HIGH</span>
 </div>
 <p class="text-slate-400">target: auth_gateway_v2</p>
 <p class="text-slate-500">status: rate_limited</p>
 </div>
-<div class="p-3 bg-primary/5 border-l-2 border-primary text-[10px] hover:bg-primary/10 transition-colors cursor-pointer">
+<div class="p-3 bg-primary/5 border-l-2 border-primary text-[10px] hover:bg-primary/10 transition-colors cursor-pointer group">
 <div class="flex justify-between items-start mb-1">
-<p class="font-bold text-primary">sql_injection_attempt</p>
-<span class="text-[8px] bg-primary text-black px-1 font-bold">MED</span>
+<p class="font-bold text-primary group-hover:underline">sql_injection_attempt</p>
+<span class="text-[8px] border border-primary/30 text-primary px-1">MED</span>
 </div>
 <p class="text-slate-400">target: customer_api_ext</p>
 <p class="text-slate-500">status: waf_mitigated</p>
 </div>
+<div class="p-3 bg-slate-800/30 border-l-2 border-slate-600 text-[10px] opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="flex justify-between items-start mb-1">
+<p class="font-bold text-slate-400">port_scan_sweep</p>
+<span class="text-[8px] border border-slate-600 px-1">LOW</span>
+</div>
+<p class="text-slate-500">target: public_subnet_04</p>
+<p class="text-slate-600">status: logged</p>
 </div>
 </div>
 </div>
