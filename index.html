@@ -2,7 +2,7 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>CTRLSEC | Managed VDP: Threat Infrastructure</title>
+<title>CTRLSEC | System Initialization</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -30,6 +30,21 @@
                         "xl": "4px",
                         "full": "9999px"
                     },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'scan': 'scan 4s linear infinite',
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blink: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        },
+                        scan: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' },
+                        }
+                    }
                 },
             },
         }
@@ -43,6 +58,8 @@
             background-size: 40px 40px;
             font-family: 'JetBrains Mono', monospace;
             text-transform: lowercase;
+            color: #e2e8f0;
+            overflow-x: hidden;
         }
         .scanlines {
             position: fixed;
@@ -53,47 +70,37 @@
             background: linear-gradient(
                 to bottom,
                 rgba(18, 16, 16, 0) 50%,
-                rgba(0, 0, 0, 0.1) 50%
+                rgba(0, 0, 0, 0.2) 50%
             );
             background-size: 100% 4px;
             z-index: 50;
             pointer-events: none;
-            opacity: 0.3;
+            opacity: 0.6;
+        }
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 179, 105, 0.02);
+            z-index: 49;
+        }
+        @keyframes flicker {
+            0% { opacity: 0.9; }
+            50% { opacity: 1.0; }
+            100% { opacity: 0.9; }
         }
         .dither-bg {
             background-image: radial-gradient(#262626 1px, transparent 0);
             background-size: 3px 3px;
         }
-        .network-pattern {
-            background-image: radial-gradient(circle, #1A1A1A 1px, transparent 1px), radial-gradient(circle, #1A1A1A 1px, transparent 1px);
-            background-position: 0 0, 10px 10px;
-            background-size: 20px 20px;
-        }
-        .glitch-hover:hover {
-            box-shadow: 0 0 10px rgba(15, 179, 105, 0.4);
-            border-color: #0fb369;
-        }
-        .heatmap-grid {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 2px;
-        }
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0B0B0B;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1A1A1A;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #0fb369;
-        }
-        .radar-chart {
-            position: relative;
-            width: 100%;
-            height: 100%;
+        .map-dots {
+            background-image: radial-gradient(#0fb369 1px, transparent 0);
+            background-size: 8px 8px;
+            opacity: 0.2;
         }
         .radar-poly {
             fill: rgba(15, 179, 105, 0.1);
@@ -111,518 +118,173 @@
             stroke: #222;
             stroke-width: 1;
         }
-        .conic-gradient-border {
-             background: conic-gradient(
-                #0fb369 0% 48%, 
-                #1A1A1A 48% 100%
-            );
-            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 4px));
-            mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #fff calc(100% - 4px));
+        .terminal-cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+        .glitch-text:hover {
+            text-shadow: 2px 0 #0fb369, -2px 0 #ef4444;
+        }.terminal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-scroll::-webkit-scrollbar-track {
+            background: #0B0B0B;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: #333;
         }
     </style>
 </head>
-<body class="text-slate-100 selection:bg-primary selection:text-background-dark">
+<body class="min-h-screen flex flex-col items-center justify-center relative selection:bg-primary selection:text-background-dark">
 <div class="scanlines"></div>
-<div class="flex h-screen overflow-hidden">
-<aside class="w-16 lg:w-48 flex flex-col border-r border-grid bg-background-dark z-40">
-<div class="p-6 border-b border-grid flex items-center gap-3">
+<div class="crt-flicker"></div>
+<header class="fixed top-0 w-full border-b border-grid bg-background-dark/90 backdrop-blur-sm z-40">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-3">
 <div class="w-6 h-6 bg-primary flex items-center justify-center">
 <span class="material-symbols-outlined text-background-dark text-xs">terminal</span>
 </div>
-<span class="hidden lg:block font-bold tracking-tighter text-lg font-display">ctrlsec</span>
+<span class="font-bold tracking-tighter text-lg font-display text-slate-100">ctrlsec</span>
 </div>
-<nav class="flex-1 py-4 space-y-1">
-<a class="flex items-center gap-3 px-6 py-3 text-primary bg-primary/10 border-r-2 border-primary" href="#">
-<span class="material-symbols-outlined text-[20px]">security</span>
-<span class="hidden lg:block text-xs font-medium">/managed_vdp</span>
-</a>
-<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-primary transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">table_chart</span>
-<span class="hidden lg:block text-xs font-medium">/cve_db</span>
-</a>
-<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-primary transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">hub</span>
-<span class="hidden lg:block text-xs font-medium">/nodes</span>
-</a>
-<a class="flex items-center gap-3 px-6 py-3 text-slate-400 hover:text-primary transition-colors" href="#">
-<span class="material-symbols-outlined text-[20px]">settings_suggest</span>
-<span class="hidden lg:block text-xs font-medium">/config</span>
-</a>
-</nav>
-<div class="p-4 space-y-3">
-<div class="hidden lg:block p-3 bg-primary/5 text-primary text-[10px] border border-primary/30 shadow-[0_0_10px_rgba(15,179,105,0.1)]">
-<div class="flex justify-between items-center mb-1">
-<strong class="uppercase">Safe Harbor</strong>
-<span class="material-symbols-outlined text-xs">verified_user</span>
+<div class="hidden md:flex items-center gap-6 text-xs font-mono text-slate-500">
+<span>system_status: <span class="text-warning">initializing</span></span>
+<span>server_time: <span class="text-primary">23:42:09 UTC</span></span>
 </div>
-<p class="mb-2 opacity-90">Program active. Legal protections enabled for researchers.</p>
-</div>
-</div>
-<div class="p-4 border-t border-grid">
-<div class="p-3 bg-surface border border-grid">
-<p class="text-[8px] text-slate-500 mb-2 uppercase tracking-tighter">/license_compliance</p>
-<div class="flex justify-between items-center mb-1">
-<span class="text-[10px] font-bold text-primary">enterprise_pro</span>
-<span class="text-[8px] text-slate-500">active</span>
-</div>
-<div class="space-y-1">
-<div class="flex justify-between text-[8px]">
-<span class="text-slate-500">seats:</span>
-<span class="text-slate-300">12 / 20</span>
-</div>
-<div class="flex justify-between text-[8px]">
-<span class="text-slate-500">expires:</span>
-<span class="text-slate-300">2025-08-12</span>
-</div>
-</div>
-</div>
-</div><div class="p-4 border-t border-grid mt-auto">
-<div class="flex items-center gap-3 opacity-50 grayscale hover:grayscale-0 cursor-pointer">
-<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-<span class="material-symbols-outlined text-sm">person</span>
-</div>
-<div class="hidden lg:block text-[10px]">
-<p class="font-bold">admin_01</p>
-<p class="text-primary">l3_access</p>
-</div>
-</div>
-</div>
-</aside>
-<main class="flex-1 flex flex-col overflow-hidden">
-<header class="h-16 border-b border-grid flex items-center justify-between px-8 bg-background-dark/80 backdrop-blur-md">
-<div class="flex items-center gap-8">
-<div>
-<h2 class="text-xs text-slate-500 font-mono">systemic_dither_v1.0</h2>
-<h1 class="text-lg font-display font-bold text-slate-100 uppercase tracking-widest">managed_vdp: threat_infrastructure</h1>
-</div>
-<div class="hidden md:flex gap-4">
-<div class="px-3 py-1 bg-primary/5 border border-primary/20 text-[10px]">
-<span class="text-primary">status:</span> active_monitoring
-                    </div>
-<div class="px-3 py-1 bg-slate-500/5 border border-slate-500/20 text-[10px]">
-<span class="text-slate-400">program_id:</span> #8821-X
-                    </div><div class="px-3 py-1 bg-red-500/10 border border-red-500/30 text-[10px] flex gap-2"><span class="text-red-500 font-bold">net_sec: 87%</span> <span class="text-slate-600">|</span> <span class="text-red-500 font-bold">app_sec: 10%</span></div>
-</div>
-</div>
-<div class="flex items-center gap-4">
-<button class="px-4 py-1 border border-primary/50 text-primary text-[10px] font-bold hover:bg-primary hover:text-background-dark transition-all uppercase">
-                    generate_report
-                </button>
-<button class="px-4 py-1 border border-slate-500/50 text-slate-400 text-[10px] font-bold hover:bg-slate-500 hover:text-background-dark transition-all uppercase">contact_support</button><button class="w-8 h-8 flex items-center justify-center border border-grid text-slate-400 hover:text-primary">
-<span class="material-symbols-outlined text-lg">notifications</span>
-</button>
 </div>
 </header>
-<div class="flex-1 overflow-y-auto p-4 lg:p-8 space-y-6">
-<div class="bg-surface border border-grid relative overflow-hidden group mb-6">
-<div class="absolute top-0 right-0 p-4 opacity-50 pointer-events-none">
-<span class="material-symbols-outlined text-grid text-[120px] opacity-10 rotate-12">shield</span>
+<main class="w-full max-w-7xl mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col gap-12">
+<section class="flex flex-col items-start gap-4 mb-8">
+<div class="inline-flex items-center gap-2 px-2 py-1 bg-primary/10 border border-primary/20 text-[10px] text-primary">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+<span>protocol_v2.0_loading</span>
 </div>
-<div class="p-6 border-b border-grid flex justify-between items-center bg-background-dark/50">
-<div class="flex items-center gap-3">
-<div class="h-2 w-2 bg-primary rounded-full animate-pulse"></div>
-<h2 class="text-sm font-display font-bold text-slate-100 uppercase tracking-widest">organizational_security_overview</h2>
+<h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-slate-100 tracking-tight leading-none glitch-text cursor-default">
+            system_initialization<br/>
+<span class="text-primary terminal-cursor">in_progress</span>
+</h1>
+<p class="max-w-xl text-slate-400 text-sm md:text-base leading-relaxed border-l-2 border-grid pl-4 mt-2">
+            establishing secure uplink to central command. neural grid synthesis ongoing. estimated completion: t-minus 14 days. secure your access node now.
+        </p>
+</section>
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full h-auto">
+<div class="lg:col-span-7 bg-surface border border-grid p-1 relative group overflow-hidden h-64 md:h-80">
+<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDcwNzA3IiAvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMWEwYTBhIiAvPgo8L3N2Zz4=')] opacity-20"></div>
+<div class="absolute top-0 left-0 w-full p-3 border-b border-grid/50 bg-background-dark/80 backdrop-blur flex justify-between items-center z-10">
+<span class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-xs text-primary animate-spin">my_location</span>
+                    threat_vector_map
+                </span>
+<span class="text-[9px] text-primary border border-primary/30 px-1">LIVE</span>
 </div>
-<div class="text-[10px] font-mono text-slate-500 uppercase">
-            last_scan: <span class="text-primary">00:14:22</span> | scope: global_infrastructure
-        </div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-0 lg:divide-x divide-grid">
-<div class="lg:col-span-2 p-6 flex flex-col items-center justify-center relative min-h-[300px]">
-<div class="w-full max-w-md aspect-square relative">
-<svg class="radar-chart w-full h-full" viewBox="0 0 200 200">
-<circle class="radar-grid-circle" cx="100" cy="100" r="20"></circle>
-<circle class="radar-grid-circle" cx="100" cy="100" r="40"></circle>
-<circle class="radar-grid-circle" cx="100" cy="100" r="60"></circle>
-<circle class="radar-grid-circle" cx="100" cy="100" r="80"></circle>
-<line class="radar-axis" x1="100" x2="100" y1="100" y2="20"></line>
-<line class="radar-axis" x1="100" x2="176" y1="100" y2="76"></line>
-<line class="radar-axis" x1="100" x2="147" y1="100" y2="165"></line>
-<line class="radar-axis" x1="100" x2="53" y1="100" y2="165"></line>
-<line class="radar-axis" x1="100" x2="24" y1="100" y2="76"></line>
-<polygon class="radar-poly" points="100,30.4 108,97 130,142 68,128 40,82"></polygon>
-<circle cx="100" cy="30.4" fill="#0fb369" r="2"></circle>
-<circle cx="108" cy="97" fill="#ef4444" r="2"></circle> 
-<circle cx="130" cy="142" fill="#eab308" r="2"></circle>
-<circle cx="68" cy="128" fill="#eab308" r="2"></circle>
-<circle cx="40" cy="82" fill="#0fb369" r="2"></circle>
-<text fill="#0fb369" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="100" y="15">network [87%]</text>
-<text fill="#ef4444" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="185" y="76">application [10%]</text>
-<text fill="#eab308" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="155" y="175">data [65%]</text>
-<text fill="#eab308" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="45" y="175">identity [42%]</text>
-<text fill="#0fb369" font-family="JetBrains Mono" font-size="8" text-anchor="middle" x="15" y="76">endpoint [75%]</text>
+<div class="w-full h-full relative map-dots flex items-center justify-center overflow-hidden">
+<div class="absolute inset-0 opacity-30">
+<svg class="w-full h-full" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+<path d="M150,100 Q200,50 250,120 T350,150 T450,100 T600,120 T700,80" fill="none" stroke="#333" stroke-width="2"></path>
+<path d="M120,250 Q220,200 280,280 T400,300 T550,250 T650,280" fill="none" stroke="#333" stroke-width="2"></path>
+<rect fill="#1A1A1A" height="80" opacity="0.5" width="120" x="100" y="80"></rect>
+<rect fill="#1A1A1A" height="100" opacity="0.5" width="180" x="500" y="60"></rect>
+<rect fill="#1A1A1A" height="120" opacity="0.5" width="100" x="300" y="200"></rect>
 </svg>
 </div>
-<div class="absolute bottom-4 right-4 text-[9px] text-slate-600 font-mono">
-                matrix_ref: sec_poly_5v
+<div class="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping"></div>
+<div class="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-primary rounded-full"></div>
+<div class="absolute top-1/2 right-1/3 w-2 h-2 bg-red-500 rounded-full animate-ping" style="animation-delay: 0.5s"></div>
+<div class="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+<div class="absolute bottom-1/3 left-1/2 w-2 h-2 bg-warning rounded-full animate-ping" style="animation-delay: 1.2s"></div>
+<div class="absolute bottom-1/3 left-1/2 w-1.5 h-1.5 bg-warning rounded-full"></div>
+<div class="absolute top-0 left-0 w-full h-1 bg-primary/20 shadow-[0_0_15px_rgba(15,179,105,0.5)] animate-scan opacity-50"></div>
+</div>
+<div class="absolute bottom-3 right-3 text-[9px] text-slate-600 font-mono bg-background-dark/80 px-2 py-1 border border-grid">
+                active_nodes: 4,821
             </div>
 </div>
-<div class="lg:col-span-1 p-6 flex flex-col justify-center items-center bg-background-dark/30">
-<div class="relative w-40 h-40 flex items-center justify-center mb-4">
-<div class="absolute inset-0 rounded-full border-4 border-grid"></div>
-<div class="absolute inset-0 rounded-full conic-gradient-border"></div>
-<div class="flex flex-col items-center z-10">
-<span class="text-5xl font-display font-bold text-slate-100 tracking-tighter">48%</span>
-<span class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">security_score</span>
+<div class="lg:col-span-2 bg-surface border border-grid p-1 relative flex flex-col h-64 md:h-80">
+<div class="p-3 border-b border-grid/50 bg-background-dark/80 flex justify-between items-center">
+<span class="text-[10px] text-slate-400 uppercase tracking-widest">security_dim</span>
+</div>
+<div class="flex-1 flex items-center justify-center p-4 relative">
+<svg class="radar-chart w-full h-full max-h-[160px]" viewBox="0 0 200 200">
+<circle class="radar-grid-circle" cx="100" cy="100" r="30"></circle>
+<circle class="radar-grid-circle" cx="100" cy="100" r="60"></circle>
+<circle class="radar-grid-circle" cx="100" cy="100" r="90"></circle>
+<line class="radar-axis" x1="100" x2="100" y1="100" y2="10"></line>
+<line class="radar-axis" x1="100" x2="178" y1="100" y2="145"></line>
+<line class="radar-axis" x1="100" x2="22" y1="100" y2="145"></line>
+<polygon class="radar-poly animate-pulse-fast" points="100,20 160,135 40,120"></polygon>
+<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="100" y="8">net</text>
+<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="185" y="155">app</text>
+<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="15" y="155">id</text>
+</svg>
+</div>
+<div class="p-2 text-[9px] text-center text-slate-500 border-t border-grid bg-background-dark/50">
+                posture_score: <span class="text-primary font-bold">88/100</span>
 </div>
 </div>
-<div class="w-full space-y-3 px-4">
-<div class="flex justify-between items-center text-[10px] font-mono border-b border-grid/50 pb-2">
-<span class="text-slate-400">posture_status</span>
-<span class="text-warning font-bold">DEGRADED</span>
+<div class="lg:col-span-3 bg-background-dark border border-grid p-1 relative flex flex-col h-64 md:h-80">
+<div class="p-3 border-b border-grid/50 bg-surface flex justify-between items-center">
+<span class="text-[10px] text-slate-400 uppercase tracking-widest">audit_stream</span>
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
 </div>
-<div class="flex justify-between items-center text-[10px] font-mono border-b border-grid/50 pb-2">
-<span class="text-slate-400">risk_velocity</span>
-<span class="text-danger font-bold flex items-center gap-1">
-<span class="material-symbols-outlined text-[12px]">trending_up</span> HIGH
-                    </span>
+<div class="flex-1 overflow-hidden relative">
+<div class="absolute inset-0 p-3 font-mono text-[9px] space-y-2 overflow-y-hidden terminal-scroll opacity-80">
+<div class="text-slate-500"><span class="text-primary">[23:42:01]</span> initializing_handshake...</div>
+<div class="text-slate-400"><span class="text-primary">[23:42:02]</span> connection_established: 192.168.x.x</div>
+<div class="text-slate-500"><span class="text-primary">[23:42:02]</span> verifying_cert_chain... <span class="text-primary">OK</span></div>
+<div class="text-slate-400"><span class="text-primary">[23:42:03]</span> <span class="text-warning">warn:</span> latency_spike_detected (42ms)</div>
+<div class="text-slate-500"><span class="text-primary">[23:42:04]</span> loading_module: threat_intel_v4</div>
+<div class="text-slate-500"><span class="text-primary">[23:42:04]</span> decrypting_payload...</div>
+<div class="text-slate-300"><span class="text-primary">[23:42:05]</span> <span class="text-red-500">alert:</span> unauthorized_ping_blocked</div>
+<div class="text-slate-500"><span class="text-primary">[23:42:06]</span> auditing_access_logs...</div>
+<div class="text-slate-400"><span class="text-primary">[23:42:07]</span> user_session_validated</div>
+<div class="text-slate-500"><span class="text-primary">[23:42:08]</span> scanning_ports [22, 80, 443]...</div>
+<div class="text-primary animate-pulse">[23:42:09] waiting_for_input_</div>
 </div>
-<div class="flex justify-between items-center text-[10px] font-mono pb-2">
-<span class="text-slate-400">compliance_gap</span>
-<span class="text-slate-200">12 controls</span>
-</div>
-</div>
-<button class="mt-6 w-full py-2 border border-primary/30 text-primary hover:bg-primary hover:text-background-dark text-[10px] uppercase font-bold transition-all flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-[14px]">analytics</span>
-                view_detailed_breakdown
-            </button>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-<div class="p-6 bg-surface border border-grid network-pattern relative overflow-hidden group glitch-hover">
-<p class="text-[10px] text-slate-500 mb-2">/triage_velocity</p>
-<div class="flex items-end justify-between">
-<h3 class="text-4xl font-display font-bold text-primary">2.4h</h3>
-<div class="text-right">
-<p class="text-primary text-xs font-bold">-18%</p>
-<p class="text-[8px] text-slate-500">avg_time_to_first_touch</p>
+<div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background-dark to-transparent pointer-events-none"></div>
 </div>
 </div>
-<div class="mt-4 h-1 bg-grid overflow-hidden">
-<div class="h-full bg-primary" style="width: 85%;"></div>
+</section>
+<section class="w-full max-w-2xl mx-auto mt-8">
+<div class="bg-surface border border-grid p-1 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<div class="bg-background-dark border border-grid/50 p-6 md:p-8">
+<div class="flex items-center gap-2 mb-6 text-primary text-xs font-bold uppercase tracking-widest">
+<span class="material-symbols-outlined text-sm">vpn_key</span>
+                    request_access_token
+                </div>
+<p class="text-slate-400 text-sm mb-6 font-mono">
+                    Enter your email to receive a priority access key when the system goes live. 
+                    <span class="text-slate-600 block mt-1 text-[10px]">Encryption: AES-256 enabled.</span>
+</p>
+<form class="flex flex-col md:flex-row gap-4">
+<div class="flex-1 relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-emerald-600 opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
+<input class="relative w-full bg-black border border-grid text-slate-300 text-sm font-mono px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all" placeholder="user@domain.corp" required="" type="email"/>
 </div>
-</div>
-<div class="p-6 bg-surface border border-grid relative overflow-hidden group glitch-hover">
-<p class="text-[10px] text-slate-500 mb-2">/researcher_density</p>
-<div class="flex items-end justify-between">
-<h3 class="text-4xl font-display font-bold text-slate-100">842</h3>
-<div class="text-right">
-<p class="text-primary text-xs font-bold">+124</p>
-<p class="text-[8px] text-slate-500">active_participants</p>
-</div>
-</div>
-<div class="mt-4 flex gap-0.5">
-<div class="h-2 w-1 bg-primary opacity-20"></div>
-<div class="h-2 w-1 bg-primary opacity-40"></div>
-<div class="h-2 w-1 bg-primary opacity-60"></div>
-<div class="h-2 w-1 bg-primary opacity-80"></div>
-<div class="h-2 w-1 bg-primary"></div>
-<div class="h-2 flex-1 bg-grid"></div>
-</div>
-</div>
-<div class="p-6 bg-surface border border-grid dither-bg relative overflow-hidden group glitch-hover">
-<p class="text-[10px] text-slate-500 mb-2">/signal_to_noise</p>
-<div class="flex items-end justify-between">
-<h3 class="text-4xl font-display font-bold text-slate-100">91%</h3>
-<div class="text-right">
-<p class="text-slate-400 text-xs font-bold">high_fidelity</p>
-<p class="text-[8px] text-slate-500">valid_submissions</p>
-</div>
-</div>
-<div class="mt-4 h-1 bg-grid flex">
-<div class="h-full bg-slate-100" style="width: 91%;"></div>
-<div class="h-full bg-red-500" style="width: 9%;"></div>
-</div>
-</div>
-<div class="p-6 bg-surface border border-grid relative overflow-hidden group glitch-hover">
-<p class="text-[10px] text-slate-500 mb-2">/bounty_throughput</p>
-<div class="flex items-end justify-between">
-<h3 class="text-4xl font-display font-bold text-slate-100">$42k</h3>
-<div class="text-right">
-<p class="text-primary text-xs font-bold">paid_mtd</p>
-<p class="text-[8px] text-slate-500">budget_utilization: 64%</p>
-</div>
-</div>
-<div class="mt-4 w-full h-8 flex items-end gap-1">
-<div class="w-1 bg-primary/20 h-[30%]"></div>
-<div class="w-1 bg-primary/40 h-[50%]"></div>
-<div class="w-1 bg-primary/30 h-[40%]"></div>
-<div class="w-1 bg-primary/60 h-[70%]"></div>
-<div class="w-1 bg-primary/50 h-[60%]"></div>
-<div class="w-1 bg-primary/80 h-[85%]"></div>
-<div class="w-1 bg-primary h-[95%]"></div>
+<button class="relative group px-8 py-3 bg-primary text-background-dark font-bold font-mono text-sm uppercase tracking-wide overflow-hidden hover:bg-white transition-colors duration-300" type="submit">
+<span class="relative z-10 flex items-center gap-2">
+                            Initialize <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</span>
+<div class="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-200"></div>
+</button>
+</form>
+<div class="mt-4 flex items-center justify-between text-[9px] text-slate-600 font-mono uppercase">
+<span>status: slots_available</span>
+<span>queue_id: #9921-X</span>
 </div>
 </div>
 </div>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-<div class="bg-surface border border-grid p-6 relative">
-<div class="flex justify-between items-start mb-4">
+</section>
+<footer class="mt-auto w-full border-t border-grid py-6">
+<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-600 font-mono uppercase">
 <div>
-<p class="text-[10px] text-slate-500 uppercase tracking-widest">/network_security_heat_map</p>
-<p class="text-[8px] text-primary mt-1 font-mono">[EXT_FACING] NODES: STABLE</p>
-</div>
-<div class="text-right">
-<span class="text-4xl font-display font-bold text-primary">87%</span>
-<p class="text-[9px] text-slate-400 uppercase tracking-wider">secure</p>
-</div>
-</div>
-<div class="flex gap-6">
-<div class="heatmap-grid w-full aspect-square max-w-[240px]">
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/70 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/50 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-yellow-500/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/70 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/70 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-red-500/80 h-full w-full animate-pulse"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/50 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-yellow-500/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/70 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/60 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-red-500/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/50 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/70 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-yellow-500/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/60 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-<div class="bg-primary/50 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div><div class="bg-primary/80 h-full w-full"></div><div class="bg-primary/90 h-full w-full"></div>
-</div>
-<div class="flex-1 space-y-3 pt-2">
-<div class="text-[9px] text-slate-500 uppercase border-b border-grid pb-1">Cluster Analysis</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">dmz_perimeter</span>
-<span class="text-primary">secure</span>
-</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">load_balancers</span>
-<span class="text-primary">secure</span>
-</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">vpn_gateways</span>
-<span class="text-yellow-500">warning</span>
-</div>
-<div class="mt-4 p-2 bg-primary/5 border border-primary/20 text-[9px] text-primary/80">
-<span class="block font-bold mb-1">RECOMMENDATION:</span>
-                    Maintain current monitoring levels. Perimeter stability is within acceptable thresholds.
-                 </div>
+                © 2024 CTRLSEC_SYSTEMS. All rights reserved.
+            </div>
+<div class="flex gap-6 mt-4 md:mt-0">
+<a class="hover:text-primary transition-colors" href="#">/privacy_protocol</a>
+<a class="hover:text-primary transition-colors" href="#">/terms_of_engagement</a>
+<a class="hover:text-primary transition-colors" href="#">/contact_hq</a>
 </div>
 </div>
-</div>
-<div class="bg-surface border border-grid p-6 relative">
-<div class="flex justify-between items-start mb-4">
-<div>
-<p class="text-[10px] text-slate-500 uppercase tracking-widest">/application_security_heat_map</p>
-<p class="text-[8px] text-red-500 mt-1 font-mono">[INTERNAL_AUTH] VULNERABILITY_CLUSTERING: CRITICAL</p>
-</div>
-<div class="text-right">
-<span class="text-4xl font-display font-bold text-red-500">10%</span>
-<p class="text-[9px] text-slate-400 uppercase tracking-wider">secure</p>
-</div>
-</div>
-<div class="flex gap-6">
-<div class="heatmap-grid w-full aspect-square max-w-[240px]">
-<div class="bg-red-500/90 h-full w-full animate-pulse"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-orange-500/70 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-orange-500/60 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-primary/20 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-yellow-500/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/70 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-orange-500/60 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/70 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/80 h-full w-full animate-pulse"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-primary/30 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-primary/20 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-yellow-500/60 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/70 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-orange-500/60 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/60 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-primary/40 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/70 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-yellow-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-orange-500/60 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-<div class="bg-primary/20 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div><div class="bg-red-600/80 h-full w-full"></div><div class="bg-red-500/90 h-full w-full"></div>
-</div>
-<div class="flex-1 space-y-3 pt-2">
-<div class="text-[9px] text-slate-500 uppercase border-b border-grid pb-1">Cluster Analysis</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">legacy_auth</span>
-<span class="text-red-500 font-bold">critical</span>
-</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">payment_api</span>
-<span class="text-red-500 font-bold">critical</span>
-</div>
-<div class="flex justify-between items-center text-[10px] font-mono">
-<span class="text-slate-300">user_db</span>
-<span class="text-orange-500">high</span>
-</div>
-<div class="mt-4 p-2 bg-red-500/10 border border-red-500/20 text-[9px] text-red-400">
-<span class="block font-bold mb-1">IMMEDIATE ACTION:</span>
-                    Initiate protocol RED-7. Patch cycles for auth modules required immediately.
-                 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="bg-surface border border-grid p-4">
-<div class="flex justify-between items-center mb-3">
-<p class="text-[10px] text-slate-500 uppercase tracking-widest">/remediation_prioritization_queue</p>
-<span class="px-2 py-0.5 bg-red-500 text-background-dark text-[9px] font-bold uppercase">Priority: CRITICAL</span>
-</div>
-<div class="overflow-x-auto">
-<table class="w-full text-left text-[10px] border-collapse font-mono">
-<thead class="text-slate-500 border-b border-grid bg-background-dark/30">
-<tr>
-<th class="py-2 px-3">cve_id</th>
-<th class="py-2 px-3">affected_layer</th>
-<th class="py-2 px-3">severity_score</th>
-<th class="py-2 px-3">status</th>
-<th class="py-2 px-3 text-right">est_fix_time</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-grid/40">
-<tr class="bg-red-500/5 hover:bg-red-500/10 transition-colors">
-<td class="py-2 px-3 text-red-400 font-bold">CVE-2024-9921</td>
-<td class="py-2 px-3 text-slate-300">[INTERNAL_AUTH] session_handling</td>
-<td class="py-2 px-3 text-red-500 font-bold">9.8 (Critical)</td>
-<td class="py-2 px-3"><span class="text-red-400 animate-pulse">exploitable</span></td>
-<td class="py-2 px-3 text-right text-slate-400">~2h 15m</td>
-</tr>
-<tr class="bg-red-500/5 hover:bg-red-500/10 transition-colors">
-<td class="py-2 px-3 text-red-400 font-bold">CVE-2024-8842</td>
-<td class="py-2 px-3 text-slate-300">[APP_LAYER] xml_parser</td>
-<td class="py-2 px-3 text-red-500 font-bold">9.1 (Critical)</td>
-<td class="py-2 px-3"><span class="text-orange-400">patch_testing</span></td>
-<td class="py-2 px-3 text-right text-slate-400">~4h 00m</td>
-</tr>
-<tr class="hover:bg-grid/20 transition-colors">
-<td class="py-2 px-3 text-orange-400">CVE-2024-7710</td>
-<td class="py-2 px-3 text-slate-300">[DB_ACCESS] sql_sanitization</td>
-<td class="py-2 px-3 text-orange-500">8.2 (High)</td>
-<td class="py-2 px-3"><span class="text-slate-400">queued</span></td>
-<td class="py-2 px-3 text-right text-slate-400">~1d 00h</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-<div class="lg:col-span-2 bg-surface border border-grid p-0 flex flex-col overflow-hidden">
-<div class="p-4 border-b border-grid flex justify-between items-center bg-background-dark/50">
-<p class="text-[10px] text-slate-500 uppercase tracking-wider">/service_level_comparison</p>
-<div class="flex gap-2">
-<span class="text-[10px] text-primary font-bold">ctrlsec_managed_vdp_active</span>
-</div>
-</div>
-<div class="flex-1 overflow-x-auto">
-<table class="w-full text-left text-[11px] border-collapse">
-<thead class="bg-grid/50 text-slate-400 font-mono uppercase text-[10px]">
-<tr>
-<th class="px-6 py-4 font-medium border-b border-grid w-1/3">technical_specification</th>
-<th class="px-6 py-4 font-medium border-b border-grid w-1/3 text-center text-slate-600">standard_vdp</th>
-<th class="px-6 py-4 font-medium border-b border-grid w-1/3 text-center text-primary bg-primary/5 border-x border-primary/20">ctrlsec_managed</th>
-</tr>
-</thead>
-<tbody class="divide-y divide-grid bg-background-dark/20 font-mono">
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300 font-bold">legal_safe_harbor_framework</td>
-<td class="px-6 py-4 text-center text-slate-600">[ ]</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">[x]</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">automated_triage_pipeline</td>
-<td class="px-6 py-4 text-center text-slate-600">[ ]</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">[x]</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">continuous_asset_discovery_depth</td>
-<td class="px-6 py-4 text-center text-slate-500">l2_surface</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">l7_deep_scan</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">researcher_id_verification</td>
-<td class="px-6 py-4 text-center text-slate-600">[ ]</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">[x]</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">vuln_reproduction_guarantee</td>
-<td class="px-6 py-4 text-center text-slate-600">[ ]</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">[x]</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">payment_processing_sla</td>
-<td class="px-6 py-4 text-center text-slate-500">net_60</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">net_07</td>
-</tr>
-<tr class="hover:bg-grid/30 transition-colors">
-<td class="px-6 py-4 text-slate-300">deduplication_engine</td>
-<td class="px-6 py-4 text-center text-slate-500">manual</td>
-<td class="px-6 py-4 text-center text-primary bg-primary/5 border-x border-primary/20">ai_automated</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="lg:col-span-1 flex flex-col gap-6">
-<div class="bg-surface border border-grid p-6 relative flex flex-col h-full">
-<div class="absolute top-0 right-0 p-2">
-<div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-</div>
-<p class="text-[10px] text-slate-500 mb-6 flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">radar</span>
-                            /live_feed_ingest
-                        </p>
-<div class="flex-1 space-y-4 overflow-y-auto pr-2 max-h-[400px]">
-<div class="p-3 border-l-2 border-primary bg-primary/5 text-[10px] font-mono">
-<div class="flex justify-between mb-1">
-<span class="text-primary font-bold">submission_received</span>
-<span class="text-slate-500">00:02:14</span>
-</div>
-<p class="text-slate-300">id: #vuln-9921</p>
-<p class="text-slate-400">target: api.payments.gateway</p>
-<p class="text-slate-500 mt-1">severity: <span class="text-red-500">critical</span></p>
-</div>
-<div class="p-3 border-l-2 border-slate-700 bg-background-dark text-[10px] font-mono opacity-60">
-<div class="flex justify-between mb-1">
-<span class="text-slate-400 font-bold">triage_bot_action</span>
-<span class="text-slate-600">00:05:32</span>
-</div>
-<p class="text-slate-400">id: #vuln-9920</p>
-<p class="text-slate-500">action: duplicate_flagged (#vuln-8812)</p>
-<p class="text-slate-500 mt-1">status: <span class="text-slate-400">closed</span></p>
-</div>
-<div class="p-3 border-l-2 border-slate-700 bg-background-dark text-[10px] font-mono opacity-60">
-<div class="flex justify-between mb-1">
-<span class="text-slate-400 font-bold">payout_processed</span>
-<span class="text-slate-600">01:12:05</span>
-</div>
-<p class="text-slate-400">researcher: @net_runner</p>
-<p class="text-slate-500">amount: $1,500.00</p>
-<p class="text-slate-500 mt-1">method: <span class="text-slate-400">crypto_transfer</span></p>
-</div>
-<div class="p-3 border-l-2 border-yellow-500 bg-yellow-500/5 text-[10px] font-mono">
-<div class="flex justify-between mb-1">
-<span class="text-yellow-500 font-bold">manual_review_req</span>
-<span class="text-slate-500">02:33:11</span>
-</div>
-<p class="text-slate-300">id: #vuln-9918</p>
-<p class="text-slate-400">reason: complex_chain_exploit</p>
-<p class="text-slate-500 mt-1">assignee: <span class="text-yellow-500">l2_analyst</span></p>
-</div>
-</div>
-<div class="mt-4 pt-4 border-t border-grid">
-<button class="w-full py-2 border border-grid text-slate-400 hover:text-primary hover:border-primary text-[10px] uppercase transition-colors">
-                                view_full_audit_log
-                            </button>
-</div>
-</div>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-6"><div class="lg:col-span-2 bg-surface border border-grid p-6"><p class="text-[10px] text-slate-500 mb-4">/audit_compliance_reporting</p><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"><div class="border border-grid p-3 bg-background-dark/50"><p class="text-[8px] text-slate-500 mb-1">ISO 27001</p><div class="flex justify-between items-end"><span class="text-xl font-display font-bold text-slate-100">88%</span><span class="text-[8px] text-primary">+2.4%</span></div><div class="mt-2 h-0.5 bg-grid"><div class="h-full bg-primary" style="width: 88%"></div></div></div><div class="border border-grid p-3 bg-background-dark/50"><p class="text-[8px] text-slate-500 mb-1">SOC 2 TYPE II</p><div class="flex justify-between items-end"><span class="text-xl font-display font-bold text-slate-100">94%</span><span class="text-[8px] text-primary">stable</span></div><div class="mt-2 h-0.5 bg-grid"><div class="h-full bg-primary" style="width: 94%"></div></div></div><div class="border border-grid p-3 bg-background-dark/50"><p class="text-[8px] text-slate-500 mb-1">DPDP / GDPR</p><div class="flex justify-between items-end"><span class="text-xl font-display font-bold text-slate-100">72%</span><span class="text-[8px] text-yellow-500">-4.1%</span></div><div class="mt-2 h-0.5 bg-grid"><div class="h-full bg-yellow-500" style="width: 72%"></div></div></div></div><div class="space-y-2"><p class="text-[9px] text-slate-400 uppercase font-bold border-b border-grid pb-1">Open Audit Findings</p><div class="flex justify-between text-[10px] py-1 border-b border-grid/50 font-mono"><span class="text-slate-300">[FIND-882] lack of MFA on legacy JumpHost</span><span class="text-red-500 font-bold uppercase">high</span></div><div class="flex justify-between text-[10px] py-1 border-b border-grid/50 font-mono"><span class="text-slate-300">[FIND-901] encryption key rotation policy</span><span class="text-yellow-500 font-bold uppercase">medium</span></div><div class="flex justify-between text-[10px] py-1 border-b border-grid/50 font-mono"><span class="text-slate-300">[FIND-912] public s3 bucket misconfiguration</span><span class="text-red-500 font-bold uppercase">critical</span></div></div></div><div class="bg-surface border border-grid p-6 relative flex flex-col justify-between"><p class="text-[10px] text-slate-500 mb-4">/vulnerability_class_distribution</p><div class="space-y-3"><div class="flex items-center gap-4 text-[10px] font-mono"><div class="w-24 text-slate-400">sqli_inj</div><div class="flex-1 h-1 bg-grid"><div class="h-full bg-red-500" style="width: 32%"></div></div><div class="w-6 text-right text-red-500">32%</div></div><div class="flex items-center gap-4 text-[10px] font-mono"><div class="w-24 text-slate-400">xss_str</div><div class="flex-1 h-1 bg-grid"><div class="h-full bg-orange-500" style="width: 24%"></div></div><div class="w-6 text-right text-orange-500">24%</div></div><div class="flex items-center gap-4 text-[10px] font-mono"><div class="w-24 text-slate-400">rce</div><div class="flex-1 h-1 bg-grid"><div class="h-full bg-primary" style="width: 12%"></div></div><div class="w-6 text-right text-primary">12%</div></div></div><div class="mt-6 pt-4 border-t border-grid"><div class="flex justify-between items-center"><span class="text-[10px] text-slate-500 uppercase">overall_health</span><span class="text-[10px] text-primary font-bold">OPTIMAL</span></div></div></div></div>
-</div>
+</footer>
 </main>
-</div>
+
 </body></html>
