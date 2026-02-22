@@ -12,11 +12,10 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#0fb369", // Signal Green
+                        "primary": "#00FF00", // Matrix Green
                         "warning": "#eab308",
                         "danger": "#ef4444",
-                        "background-light": "#f6f8f7",
-                        "background-dark": "#0B0B0B", // Matte Black
+                        "background-dark": "#0D0D0D", // Deep Black
                         "surface": "#141414",
                         "grid": "#1A1A1A",
                     },
@@ -26,23 +25,27 @@
                     },
                     borderRadius: {
                         "DEFAULT": "0px",
-                        "lg": "2px",
-                        "xl": "4px",
-                        "full": "9999px"
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
                     },
                     animation: {
-                        'blink': 'blink 1s step-end infinite',
                         'scan': 'scan 4s linear infinite',
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'cursor': 'cursor 1s step-end infinite',
+                        'flicker': 'flicker 2s infinite',
                     },
                     keyframes: {
-                        blink: {
-                            '0%, 100%': { opacity: '1' },
-                            '50%': { opacity: '0' },
-                        },
                         scan: {
-                            '0%': { transform: 'translateY(-100%)' },
-                            '100%': { transform: 'translateY(100%)' },
+                            '0%': { top: '0%' },
+                            '100%': { top: '100%' }
+                        },
+                        cursor: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' }
+                        },
+                        flicker: {
+                            '0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%': { opacity: '1' },
+                            '20%, 21.999%, 63%, 63.999%, 65%, 69.999%': { opacity: '0.4' },
                         }
                     }
                 },
@@ -51,7 +54,7 @@
     </script>
 <style>
         body {
-            background-color: #0B0B0B;
+            background-color: #0D0D0D;
             background-image: 
                 linear-gradient(to right, #1A1A1A 1px, transparent 1px),
                 linear-gradient(to bottom, #1A1A1A 1px, transparent 1px);
@@ -59,7 +62,8 @@
             font-family: 'JetBrains Mono', monospace;
             text-transform: lowercase;
             color: #e2e8f0;
-            overflow-x: hidden;
+            overflow: hidden;
+            height: 100vh;
         }
         .scanlines {
             position: fixed;
@@ -73,218 +77,168 @@
                 rgba(0, 0, 0, 0.2) 50%
             );
             background-size: 100% 4px;
-            z-index: 50;
+            z-index: 40;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.4;
         }
-        .crt-flicker {
-            animation: flicker 0.15s infinite;
-            pointer-events: none;
+        .laser-line {
             position: fixed;
-            top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(15, 179, 105, 0.02);
-            z-index: 49;
-        }
-        @keyframes flicker {
-            0% { opacity: 0.9; }
-            50% { opacity: 1.0; }
-            100% { opacity: 0.9; }
+            height: 2px;
+            background: #00FF00;
+            box-shadow: 0 0 10px #00FF00, 0 0 5px #00FF00;
+            opacity: 0.3;
+            z-index: 30;
+            pointer-events: none;
+            animation: scan 6s linear infinite;
         }
         .dither-bg {
-            background-image: radial-gradient(#262626 1px, transparent 0);
-            background-size: 3px 3px;
+            background-image: radial-gradient(#1A1A1A 1px, transparent 0);
+            background-size: 4px 4px;
         }
-        .map-dots {
-            background-image: radial-gradient(#0fb369 1px, transparent 0);
-            background-size: 8px 8px;
-            opacity: 0.2;
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
-        .radar-poly {
-            fill: rgba(15, 179, 105, 0.1);
-            stroke: #0fb369;
-            stroke-width: 1.5;
-            filter: drop-shadow(0 0 4px rgba(15, 179, 105, 0.5));
-        }
-        .radar-axis {
-            stroke: #333;
-            stroke-width: 1;
-            stroke-dasharray: 4 2;
-        }
-        .radar-grid-circle {
-            fill: none;
-            stroke: #222;
-            stroke-width: 1;
-        }
-        .terminal-cursor::after {
-            content: '_';
-            animation: blink 1s step-end infinite;
-        }
-        .glitch-text:hover {
-            text-shadow: 2px 0 #0fb369, -2px 0 #ef4444;
-        }.terminal-scroll::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
-        .terminal-scroll::-webkit-scrollbar-track {
+        .custom-scrollbar::-webkit-scrollbar-track {
             background: #0B0B0B;
         }
-        .terminal-scroll::-webkit-scrollbar-thumb {
-            background: #333;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1A1A1A;
+        }input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #0D0D0D inset !important;
+            -webkit-text-fill-color: #00FF00 !important;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center relative selection:bg-primary selection:text-background-dark">
+<body class="selection:bg-primary selection:text-background-dark flex flex-col items-center justify-center relative">
 <div class="scanlines"></div>
-<div class="crt-flicker"></div>
-<header class="fixed top-0 w-full border-b border-grid bg-background-dark/90 backdrop-blur-sm z-40">
-<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-<div class="flex items-center gap-3">
-<div class="w-6 h-6 bg-primary flex items-center justify-center">
-<span class="material-symbols-outlined text-background-dark text-xs">terminal</span>
+<div class="laser-line"></div>
+<div class="absolute top-0 left-0 w-full p-6 flex justify-between items-start z-50">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary animate-pulse"></div>
+<span class="font-bold tracking-tighter text-lg">ctrlsec</span>
 </div>
-<span class="font-bold tracking-tighter text-lg font-display text-slate-100">ctrlsec</span>
+<div class="flex flex-col items-end">
+<div class="px-3 py-1 bg-primary/10 border border-primary/30 text-[10px] animate-flicker">
+<span class="text-primary font-bold">status: initialization</span>
 </div>
-<div class="hidden md:flex items-center gap-6 text-xs font-mono text-slate-500">
-<span>system_status: <span class="text-warning">initializing</span></span>
-<span>server_time: <span class="text-primary">23:42:09 UTC</span></span>
+<span class="text-[9px] text-slate-500 mt-1">v.0.9.1_alpha</span>
 </div>
 </div>
-</header>
-<main class="w-full max-w-7xl mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col gap-12">
-<section class="flex flex-col items-start gap-4 mb-8">
-<div class="inline-flex items-center gap-2 px-2 py-1 bg-primary/10 border border-primary/20 text-[10px] text-primary">
-<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-<span>protocol_v2.0_loading</span>
-</div>
-<h1 class="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-slate-100 tracking-tight leading-none glitch-text cursor-default">
-            system_initialization<br/>
-<span class="text-primary terminal-cursor">in_progress</span>
+<main class="z-20 w-full max-w-5xl px-6 flex flex-col items-center gap-12">
+<div class="text-center space-y-4 max-w-3xl">
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white glow-text">
+                system_initialization<br/>_in_progress<span class="text-primary animate-cursor">_</span>
 </h1>
-<p class="max-w-xl text-slate-400 text-sm md:text-base leading-relaxed border-l-2 border-grid pl-4 mt-2">
-            establishing secure uplink to central command. neural grid synthesis ongoing. estimated completion: t-minus 14 days. secure your access node now.
-        </p>
-</section>
-<section class="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full h-auto">
-<div class="lg:col-span-7 bg-surface border border-grid p-1 relative group overflow-hidden h-64 md:h-80">
-<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDcwNzA3IiAvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMWEwYTBhIiAvPgo8L3N2Zz4=')] opacity-20"></div>
-<div class="absolute top-0 left-0 w-full p-3 border-b border-grid/50 bg-background-dark/80 backdrop-blur flex justify-between items-center z-10">
-<span class="text-[10px] text-slate-400 uppercase tracking-widest flex items-center gap-2">
-<span class="material-symbols-outlined text-xs text-primary animate-spin">my_location</span>
-                    threat_vector_map
-                </span>
-<span class="text-[9px] text-primary border border-primary/30 px-1">LIVE</span>
+<p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto border-l border-primary/30 pl-4 text-left md:text-center md:border-l-0 md:pl-0">
+                infrastructure-first cybersecurity for the next era of technical risk.
+            </p>
 </div>
-<div class="w-full h-full relative map-dots flex items-center justify-center overflow-hidden">
-<div class="absolute inset-0 opacity-30">
-<svg class="w-full h-full" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-<path d="M150,100 Q200,50 250,120 T350,150 T450,100 T600,120 T700,80" fill="none" stroke="#333" stroke-width="2"></path>
-<path d="M120,250 Q220,200 280,280 T400,300 T550,250 T650,280" fill="none" stroke="#333" stroke-width="2"></path>
-<rect fill="#1A1A1A" height="80" opacity="0.5" width="120" x="100" y="80"></rect>
-<rect fill="#1A1A1A" height="100" opacity="0.5" width="180" x="500" y="60"></rect>
-<rect fill="#1A1A1A" height="120" opacity="0.5" width="100" x="300" y="200"></rect>
-</svg>
+<div class="w-full grid grid-cols-1 md:grid-cols-2 gap-4 md:h-[300px]">
+<div class="bg-surface border border-grid p-6 relative flex flex-col justify-between group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">/global_health_index</p>
+<span class="material-symbols-outlined text-primary text-lg animate-spin" style="animation-duration: 3s;">data_usage</span>
 </div>
-<div class="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-ping"></div>
-<div class="absolute top-1/4 left-1/4 w-1.5 h-1.5 bg-primary rounded-full"></div>
-<div class="absolute top-1/2 right-1/3 w-2 h-2 bg-red-500 rounded-full animate-ping" style="animation-delay: 0.5s"></div>
-<div class="absolute top-1/2 right-1/3 w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-<div class="absolute bottom-1/3 left-1/2 w-2 h-2 bg-warning rounded-full animate-ping" style="animation-delay: 1.2s"></div>
-<div class="absolute bottom-1/3 left-1/2 w-1.5 h-1.5 bg-warning rounded-full"></div>
-<div class="absolute top-0 left-0 w-full h-1 bg-primary/20 shadow-[0_0_15px_rgba(15,179,105,0.5)] animate-scan opacity-50"></div>
-</div>
-<div class="absolute bottom-3 right-3 text-[9px] text-slate-600 font-mono bg-background-dark/80 px-2 py-1 border border-grid">
-                active_nodes: 4,821
-            </div>
-</div>
-<div class="lg:col-span-2 bg-surface border border-grid p-1 relative flex flex-col h-64 md:h-80">
-<div class="p-3 border-b border-grid/50 bg-background-dark/80 flex justify-between items-center">
-<span class="text-[10px] text-slate-400 uppercase tracking-widest">security_dim</span>
-</div>
-<div class="flex-1 flex items-center justify-center p-4 relative">
-<svg class="radar-chart w-full h-full max-h-[160px]" viewBox="0 0 200 200">
-<circle class="radar-grid-circle" cx="100" cy="100" r="30"></circle>
-<circle class="radar-grid-circle" cx="100" cy="100" r="60"></circle>
-<circle class="radar-grid-circle" cx="100" cy="100" r="90"></circle>
-<line class="radar-axis" x1="100" x2="100" y1="100" y2="10"></line>
-<line class="radar-axis" x1="100" x2="178" y1="100" y2="145"></line>
-<line class="radar-axis" x1="100" x2="22" y1="100" y2="145"></line>
-<polygon class="radar-poly animate-pulse-fast" points="100,20 160,135 40,120"></polygon>
-<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="100" y="8">net</text>
-<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="185" y="155">app</text>
-<text fill="#0fb369" font-family="JetBrains Mono" font-size="10" text-anchor="middle" x="15" y="155">id</text>
-</svg>
-</div>
-<div class="p-2 text-[9px] text-center text-slate-500 border-t border-grid bg-background-dark/50">
-                posture_score: <span class="text-primary font-bold">88/100</span>
+<div class="space-y-1">
+<span class="text-5xl font-bold text-primary tracking-tighter animate-pulse">94.2%</span>
+<div class="w-full h-8 flex items-end gap-0.5 opacity-50">
+<div class="w-1 bg-primary h-[40%]"></div>
+<div class="w-1 bg-primary h-[60%]"></div>
+<div class="w-1 bg-primary h-[50%]"></div>
+<div class="w-1 bg-primary h-[80%]"></div>
+<div class="w-1 bg-primary h-[70%]"></div>
+<div class="w-1 bg-primary h-[90%]"></div>
+<div class="w-1 bg-primary h-[60%]"></div>
+<div class="w-1 bg-primary h-[75%]"></div>
+<div class="w-1 bg-primary h-[40%]"></div>
+<div class="w-1 bg-primary h-[60%]"></div>
+<div class="w-1 bg-primary h-[50%]"></div>
+<div class="w-1 bg-primary h-[80%]"></div>
+<div class="w-1 bg-primary h-[70%]"></div>
+<div class="w-1 bg-primary h-[90%]"></div>
+<div class="w-1 bg-primary h-[60%]"></div>
+<div class="w-1 bg-primary h-[75%]"></div>
 </div>
 </div>
-<div class="lg:col-span-3 bg-background-dark border border-grid p-1 relative flex flex-col h-64 md:h-80">
-<div class="p-3 border-b border-grid/50 bg-surface flex justify-between items-center">
-<span class="text-[10px] text-slate-400 uppercase tracking-widest">audit_stream</span>
-<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
 </div>
-<div class="flex-1 overflow-hidden relative">
-<div class="absolute inset-0 p-3 font-mono text-[9px] space-y-2 overflow-y-hidden terminal-scroll opacity-80">
-<div class="text-slate-500"><span class="text-primary">[23:42:01]</span> initializing_handshake...</div>
-<div class="text-slate-400"><span class="text-primary">[23:42:02]</span> connection_established: 192.168.x.x</div>
-<div class="text-slate-500"><span class="text-primary">[23:42:02]</span> verifying_cert_chain... <span class="text-primary">OK</span></div>
-<div class="text-slate-400"><span class="text-primary">[23:42:03]</span> <span class="text-warning">warn:</span> latency_spike_detected (42ms)</div>
-<div class="text-slate-500"><span class="text-primary">[23:42:04]</span> loading_module: threat_intel_v4</div>
-<div class="text-slate-500"><span class="text-primary">[23:42:04]</span> decrypting_payload...</div>
-<div class="text-slate-300"><span class="text-primary">[23:42:05]</span> <span class="text-red-500">alert:</span> unauthorized_ping_blocked</div>
-<div class="text-slate-500"><span class="text-primary">[23:42:06]</span> auditing_access_logs...</div>
-<div class="text-slate-400"><span class="text-primary">[23:42:07]</span> user_session_validated</div>
-<div class="text-slate-500"><span class="text-primary">[23:42:08]</span> scanning_ports [22, 80, 443]...</div>
-<div class="text-primary animate-pulse">[23:42:09] waiting_for_input_</div>
-</div>
-<div class="absolute bottom-0 left-0 w-full h-12 bg-gradient-to-t from-background-dark to-transparent pointer-events-none"></div>
+<div class="bg-surface border border-grid p-6 relative flex flex-col justify-between group hover:border-primary/50 transition-colors">
+<div class="flex justify-between items-start">
+<p class="text-[10px] text-slate-500 uppercase tracking-wider">/live_node_status</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-primary rounded-none animate-flicker shadow-[0_0_8px_#00FF00]"></span>
+<span class="text-[10px] text-primary">live</span>
 </div>
 </div>
-</section>
-<section class="w-full max-w-2xl mx-auto mt-8">
-<div class="bg-surface border border-grid p-1 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-<div class="bg-background-dark border border-grid/50 p-6 md:p-8">
-<div class="flex items-center gap-2 mb-6 text-primary text-xs font-bold uppercase tracking-widest">
-<span class="material-symbols-outlined text-sm">vpn_key</span>
-                    request_access_token
-                </div>
-<p class="text-slate-400 text-sm mb-6 font-mono">
-                    Enter your email to receive a priority access key when the system goes live. 
-                    <span class="text-slate-600 block mt-1 text-[10px]">Encryption: AES-256 enabled.</span>
-</p>
-<form class="flex flex-col md:flex-row gap-4">
-<div class="flex-1 relative group">
-<div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-emerald-600 opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
-<input class="relative w-full bg-black border border-grid text-slate-300 text-sm font-mono px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-slate-700 transition-all" placeholder="user@domain.corp" required="" type="email"/>
+<div class="text-right">
+<span class="text-5xl font-bold text-white tracking-tighter">1,024</span>
+<p class="text-xs text-slate-500 mt-1">active_endpoints_verified</p>
 </div>
-<button class="relative group px-8 py-3 bg-primary text-background-dark font-bold font-mono text-sm uppercase tracking-wide overflow-hidden hover:bg-white transition-colors duration-300" type="submit">
-<span class="relative z-10 flex items-center gap-2">
-                            Initialize <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</span>
-<div class="absolute inset-0 bg-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-200"></div>
-</button>
+<div class="mt-4 grid grid-cols-8 gap-1 opacity-30">
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-slate-700 w-full"></div>
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-primary w-full"></div>
+<div class="h-1 bg-slate-700 w-full"></div>
+<div class="h-1 bg-primary w-full"></div>
+</div>
+</div>
+<div class="md:col-span-2 bg-background-dark border border-grid p-4 h-[140px] relative overflow-hidden flex flex-col">
+<div class="absolute top-0 left-0 bg-primary text-background-dark text-[9px] font-bold px-2 py-0.5">audit_log_stream</div>
+<div class="flex-1 overflow-hidden relative mt-4">
+<div class="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-background-dark to-transparent z-10 pointer-events-none"></div>
+<div class="font-mono text-[10px] space-y-1.5 opacity-80 animate-[scan_10s_linear_infinite_reverse]" style="animation: none;">
+<p class="text-slate-400"><span class="text-primary">[SIGNAL_ACQUIRED]</span> handshake_protocol_v2 established with remote_host: 192.168.0.x</p>
+<p class="text-slate-400"><span class="text-yellow-500">[BOOTING_MODULE_X]</span> loading dependencies for threat_detection_engine...</p>
+<p class="text-slate-400"><span class="text-primary">[SYS_OK]</span> memory_integrity_check: passed (0.004ms)</p>
+<p class="text-slate-400"><span class="text-slate-600">[PENDING]</span> awaiting_user_credentials for admin_panel_access</p>
+<p class="text-slate-400"><span class="text-primary">[SIGNAL_ACQUIRED]</span> secondary_node_cluster_04 online</p>
+<p class="text-slate-400"><span class="text-yellow-500">[WARN]</span> latency_spike_detected in sector_7 (mitigated)</p>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full max-w-md relative z-30">
+<p class="text-center text-[10px] text-slate-500 mb-2 uppercase tracking-widest">early_access_terminal</p>
+<form class="relative group">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-primary opacity-20 group-hover:opacity-40 transition duration-500 blur-sm"></div>
+<div class="relative flex items-center bg-black border border-grid group-hover:border-primary transition-colors">
+<span class="pl-4 pr-2 text-primary font-bold select-none text-sm">request_access&gt;</span>
+<input class="w-full bg-transparent border-none text-primary placeholder-slate-700 focus:ring-0 focus:outline-none py-3 text-sm font-mono caret-primary" placeholder="enter_email_address" required="" type="email"/>
+<button class="px-6 py-3 text-xs font-bold bg-primary/10 text-primary border-l border-primary/20 hover:bg-primary hover:text-black transition-all uppercase tracking-wider" type="submit">
+                        Submit
+                    </button>
+</div>
 </form>
-<div class="mt-4 flex items-center justify-between text-[9px] text-slate-600 font-mono uppercase">
-<span>status: slots_available</span>
-<span>queue_id: #9921-X</span>
+<p class="text-center text-[9px] text-slate-600 mt-3">
+                * by_submitting_you_agree_to_our_log_retention_policy
+            </p>
 </div>
-</div>
-</div>
-</section>
-<footer class="mt-auto w-full border-t border-grid py-6">
-<div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-600 font-mono uppercase">
-<div>
-                © 2024 CTRLSEC_SYSTEMS. All rights reserved.
-            </div>
-<div class="flex gap-6 mt-4 md:mt-0">
-<a class="hover:text-primary transition-colors" href="#">/privacy_protocol</a>
-<a class="hover:text-primary transition-colors" href="#">/terms_of_engagement</a>
-<a class="hover:text-primary transition-colors" href="#">/contact_hq</a>
-</div>
-</div>
-</footer>
 </main>
+<div class="fixed bottom-6 left-6 hidden md:block opacity-30">
+<div class="w-24 h-24 border-l border-b border-slate-700 relative">
+<div class="absolute bottom-0 left-0 w-2 h-2 bg-primary"></div>
+<p class="absolute bottom-2 left-4 text-[9px] text-slate-500 -rotate-90 origin-bottom-left">sys_diag</p>
+</div>
+</div>
+<div class="fixed bottom-6 right-6 hidden md:block opacity-30">
+<div class="w-24 h-24 border-r border-b border-slate-700 relative">
+<div class="absolute bottom-0 right-0 w-2 h-2 bg-primary"></div>
+<div class="absolute bottom-2 right-2 text-right">
+<p class="text-[9px] text-slate-500">grid_coord: 44.2, -12.4</p>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 pointer-events-none dither-bg opacity-10 z-0"></div>
 
 </body></html>
